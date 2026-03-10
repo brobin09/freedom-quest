@@ -3,23 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="theme-color" content="#000000">
 <title>Freedom Quest</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
-html,body{
-  width:100%;height:100%;overflow:hidden;background:#000;
-  font-family:Georgia,serif;position:fixed;top:0;left:0;touch-action:none;
-}
-#title{
-  position:fixed;inset:0;z-index:200;
+html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Georgia,serif;touch-action:none;}
+
+/* ── TITLE ── */
+#title{position:fixed;inset:0;z-index:200;
   background:radial-gradient(ellipse at 50% 30%,#2a1800,#080400 70%,#000);
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  text-align:center;padding:20px;
-}
+  text-align:center;padding:20px;}
 .t1{font-size:clamp(28px,9vw,54px);font-weight:900;color:#D4AF37;
     text-shadow:0 0 40px #FFD700,0 0 80px #D4AF37,0 5px 0 #5a3e00;letter-spacing:4px;}
 .t2{font-size:clamp(11px,3.2vw,15px);color:#c8a96e;letter-spacing:5px;margin:6px 0 14px;font-style:italic;}
@@ -31,52 +24,73 @@ html,body{
 .lore{margin-top:12px;color:#9a7840;font-style:italic;font-size:clamp(11px,2.8vw,13px);
   max-width:280px;line-height:1.7;}
 
-/* Game: fixed full screen, flex column */
-#game{position:fixed;inset:0;display:none;flex-direction:column;}
+/* ── GAME LAYOUT ── */
+#game{
+  position:fixed;inset:0;
+  display:none;          /* JS sets to flex when started */
+  flex-direction:column;
+  background:#000;
+}
 
-/* Canvas area fills everything above controls */
-#canvasWrap{position:relative;flex:1;min-height:0;overflow:hidden;background:#000;}
+/* Canvas wrapper — takes all space above the controller */
+#canvasWrap{
+  position:relative;
+  flex:1 1 0;
+  min-height:0;
+  overflow:hidden;
+  background:#000;
+}
 
-/* Canvas fills its container exactly */
-canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
+/* Canvas fills the wrapper exactly, no scaling tricks */
+#cvs{
+  position:absolute;
+  top:0; left:0;
+  width:100%; height:100%;
+  display:block;
+}
 
-/* HUD */
-#hud{position:absolute;top:0;left:0;right:0;
+/* ── HUD (overlaid on canvas) ── */
+#hud{
+  position:absolute;top:0;left:0;right:0;
   display:flex;justify-content:space-between;align-items:flex-start;
-  padding:6px 8px 0;pointer-events:none;z-index:10;gap:3px;flex-wrap:wrap;}
+  padding:6px 8px 0;pointer-events:none;z-index:10;gap:3px;flex-wrap:wrap;
+}
 .hp{background:rgba(0,0,0,0.88);border:2px solid #D4AF37;border-radius:8px;
     padding:3px 8px;color:#D4AF37;font-size:clamp(10px,2.5vw,13px);letter-spacing:1px;}
 #hrow{display:flex;gap:2px;margin-top:2px;font-size:clamp(13px,3.5vw,17px);}
+
 #bossbar{position:absolute;top:44px;left:6%;right:6%;display:none;z-index:12;}
 #bossbar .bl{font-size:11px;color:#FF1744;text-align:center;letter-spacing:2px;margin-bottom:3px;}
 #bossbar .bt{height:13px;background:#330000;border:1px solid #FF1744;border-radius:6px;overflow:hidden;}
 #bossbar .bf{height:100%;background:linear-gradient(90deg,#FF1744,#FF6D00);transition:width 0.3s;}
-#dlg{position:absolute;bottom:8px;left:8px;right:8px;
-  background:rgba(4,2,0,0.97);border:2px solid #D4AF37;border-radius:10px;
-  padding:10px 13px;z-index:20;display:none;}
-#dlgname{color:#D4AF37;font-size:clamp(12px,3.2vw,15px);font-weight:bold;letter-spacing:1px;margin-bottom:4px;}
-#dlgtxt{color:#f0ddb0;font-size:clamp(11px,2.8vw,13px);line-height:1.6;font-style:italic;}
-.cont{color:#D4AF37;font-size:9px;text-align:right;margin-top:5px;letter-spacing:1px;}
-#notif{position:absolute;top:44px;left:50%;transform:translateX(-50%);
+
+#wavemsg{position:absolute;top:44px;left:50%;transform:translateX(-50%);
+  background:rgba(0,0,0,0.7);border:1px solid #555;border-radius:12px;
+  padding:3px 12px;color:#aaa;font-size:10px;z-index:11;display:none;
+  white-space:nowrap;pointer-events:none;}
+
+#notif{position:absolute;bottom:60px;left:50%;transform:translateX(-50%);
   background:rgba(0,0,0,0.92);border:1px solid #D4AF37;border-radius:18px;
   padding:5px 14px;color:#D4AF37;font-size:clamp(10px,2.5vw,12px);
   z-index:30;display:none;white-space:nowrap;max-width:92%;overflow:hidden;text-overflow:ellipsis;}
+
 #banner{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
   z-index:60;text-align:center;pointer-events:none;display:none;width:90%;}
 #btitle{font-size:clamp(18px,6vw,38px);font-weight:900;letter-spacing:3px;}
 #bsub{color:#f0ddb0;font-style:italic;margin-top:4px;font-size:clamp(10px,2.8vw,13px);}
+
+#dlg{position:absolute;bottom:8px;left:8px;right:8px;
+  background:rgba(4,2,0,0.97);border:2px solid #D4AF37;border-radius:10px;
+  padding:10px 13px;z-index:20;display:none;box-shadow:0 0 18px #D4AF3755;}
+#dlgname{color:#D4AF37;font-size:clamp(12px,3.2vw,15px);font-weight:bold;letter-spacing:1px;margin-bottom:4px;}
+#dlgtxt{color:#f0ddb0;font-size:clamp(11px,2.8vw,13px);line-height:1.6;font-style:italic;}
+.cont{color:#D4AF37;font-size:9px;text-align:right;margin-top:5px;letter-spacing:1px;}
+
 #flash{position:absolute;inset:0;pointer-events:none;z-index:50;
   background:rgba(255,30,30,0.45);opacity:0;transition:opacity 0.07s;}
 #wflash{position:absolute;inset:0;pointer-events:none;z-index:49;background:#fff;opacity:0;}
-#ov{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;
-  align-items:center;justify-content:center;background:rgba(0,0,0,0.94);text-align:center;padding:24px;}
-#ovtitle{font-size:clamp(24px,8vw,50px);font-weight:900;margin-bottom:10px;}
-#ovsub{color:#c8a96e;font-size:clamp(12px,3.2vw,16px);font-style:italic;margin-bottom:18px;line-height:1.7;}
-.rbtn{background:linear-gradient(180deg,#D4AF37,#8B6914);color:#0a0400;border:none;
-  padding:13px 40px;font-size:clamp(14px,4vw,17px);font-weight:900;letter-spacing:2px;
-  border-radius:38px;cursor:pointer;font-family:Georgia,serif;min-height:52px;}
 
-/* Quiz */
+/* ── QUIZ ── */
 #quiz{position:fixed;inset:0;z-index:150;background:rgba(0,0,0,0.98);
   display:none;flex-direction:column;align-items:center;
   padding:20px 16px 16px;overflow-y:auto;-webkit-overflow-scrolling:touch;text-align:center;}
@@ -94,82 +108,115 @@ canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
   padding:13px 36px;font-size:clamp(13px,3.5vw,16px);font-weight:900;border-radius:28px;
   cursor:pointer;margin-top:14px;font-family:Georgia,serif;min-height:52px;display:none;}
 
-/* Touch controller — fixed height below canvas */
-#ctrl{flex-shrink:0;height:200px;display:flex;flex-direction:row;
-  align-items:center;justify-content:space-between;
-  padding:8px 16px max(8px,env(safe-area-inset-bottom));
+/* ── GAME OVER / WIN OVERLAY ── */
+#ov{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;
+  align-items:center;justify-content:center;background:rgba(0,0,0,0.94);text-align:center;padding:24px;}
+#ovtitle{font-size:clamp(24px,8vw,50px);font-weight:900;margin-bottom:10px;}
+#ovsub{color:#c8a96e;font-size:clamp(12px,3.2vw,16px);font-style:italic;margin-bottom:18px;line-height:1.7;}
+.rbtn{background:linear-gradient(180deg,#D4AF37,#8B6914);color:#0a0400;border:none;
+  padding:13px 40px;font-size:clamp(14px,4vw,17px);font-weight:900;letter-spacing:2px;
+  border-radius:38px;cursor:pointer;font-family:Georgia,serif;min-height:52px;}
+
+/* ── TOUCH CONTROLLER ── */
+#ctrl{
+  flex:0 0 auto;
+  height:200px;
+  display:flex;
+  flex-direction:row;
+  align-items:center;
+  justify-content:space-between;
+  padding:8px 20px max(8px,env(safe-area-inset-bottom));
   background:linear-gradient(180deg,#0c0700,#060400);
-  border-top:2px solid #2a1800;gap:8px;}
-.dpad{--bs:60px;display:grid;
-  grid-template-columns:var(--bs) var(--bs) var(--bs);
-  grid-template-rows:var(--bs) var(--bs) var(--bs);gap:3px;}
-.db{background:rgba(212,175,55,.18);border:2px solid rgba(212,175,55,.4);
-  border-radius:9px;display:flex;align-items:center;justify-content:center;
-  color:#D4AF37;font-size:22px;cursor:pointer;user-select:none;touch-action:none;}
-.db:active,.db.on{background:rgba(212,175,55,.55);border-color:#FFD700;}
+  border-top:2px solid #2a1800;
+  gap:8px;
+}
+.dpad{
+  display:grid;
+  grid-template-columns:64px 64px 64px;
+  grid-template-rows:64px 64px 64px;
+  gap:4px;
+}
+.db{
+  background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.45);
+  border-radius:10px;display:flex;align-items:center;justify-content:center;
+  color:#D4AF37;font-size:24px;cursor:pointer;user-select:none;
+  -webkit-user-select:none;touch-action:none;
+}
+.db:active{background:rgba(212,175,55,.6);border-color:#FFD700;}
 .dc{background:transparent!important;border-color:transparent!important;pointer-events:none;}
-.abtns{--ab:68px;display:grid;grid-template-columns:var(--ab) var(--ab);gap:10px;align-items:center;}
-.ab{width:var(--ab);height:var(--ab);border-radius:50%;border:2.5px solid;
-  cursor:pointer;user-select:none;touch-action:none;
+
+.abtns{
+  display:grid;
+  grid-template-columns:72px 72px;
+  gap:10px;
+  align-content:center;
+}
+.ab{
+  width:72px;height:72px;border-radius:50%;border:2.5px solid;
+  cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:11px;font-weight:bold;line-height:1.3;}
+  font-size:11px;font-weight:bold;line-height:1.3;
+}
 .ab:active{transform:scale(.84);}
-.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:24px!important;}
+.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:26px!important;}
 .tk{background:rgba(140,0,0,.8);border-color:#FF6B35;color:#FFD4B8;}
 .ta{background:rgba(20,80,30,.8);border-color:#4CAF80;color:#B8FFD4;}
 .mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:18px!important;}
 
-/* Keyboard legend — desktop only */
-#kblegend{display:none;position:absolute;bottom:12px;left:50%;transform:translateX(-50%);
-  background:rgba(0,0,0,0.85);border:1px solid rgba(212,175,55,0.35);border-radius:10px;
-  padding:8px 16px;z-index:15;pointer-events:none;
-  flex-direction:row;gap:14px;align-items:center;white-space:nowrap;}
-#kblegend span{color:#c8a96e;font-size:11px;}
-#kblegend kbd{background:rgba(212,175,55,.18);border:1.5px solid #D4AF37;
-  border-radius:4px;padding:1px 6px;font-size:10px;color:#FFD700;font-family:monospace;}
+/* Desktop: hide controller, show keyboard hint */
+#kbhint{display:none;position:absolute;bottom:8px;right:8px;
+  color:rgba(212,175,55,.5);font-size:10px;pointer-events:none;letter-spacing:1px;z-index:15;}
 @media(hover:hover)and(pointer:fine){
   #ctrl{display:none!important;}
-  #kblegend{display:flex!important;}
+  #kbhint{display:block!important;}
 }
 </style>
 </head>
 <body>
-<!-- ROTATE NUDGE — shown on portrait phones via CSS -->
-<div id="rotate">
-  <div>📱↻</div>
-  <p>Freedom Quest plays best<br>in <strong style="color:#D4AF37">landscape mode</strong>.<br>Rotate your phone sideways!</p>
-</div>
+
+<!-- TITLE SCREEN -->
 <div id="title">
-  <div style="font-size:54px;margin-bottom:5px;filter:drop-shadow(0 0 16px #D4AF37)">✊🏿</div>
   <div class="t1">FREEDOM QUEST</div>
-  <div class="t2">ECHOES OF THE ANCESTORS</div>
+  <div class="t2">A BLACK HISTORY ODYSSEY</div>
   <div class="kente"></div>
-  <button class="sbtn" onclick="startGame()">▶ &nbsp;BEGIN JOURNEY</button>
-  <p class="lore">Five worlds. Ten Ancestors.<br>Fight slave catchers. Answer the quiz. Find freedom.<br>A boss awaits at the end.</p>
+  <button class="sbtn" onclick="startGame()">BEGIN THE JOURNEY</button>
+  <div class="lore">Walk with Ancestors. Defeat slave catchers.<br>Answer history. Reach freedom.</div>
 </div>
 
+<!-- GAME SCREEN -->
 <div id="game">
+
+  <!-- Canvas area -->
   <div id="canvasWrap">
     <canvas id="cvs"></canvas>
-    <div id="flash"></div><div id="wflash"></div>
+    <div id="flash"></div>
+    <div id="wflash"></div>
+    <!-- HUD -->
     <div id="hud">
-      <div class="hp"><div style="font-size:8px;letter-spacing:2px">SPIRIT</div><div id="hrow"></div></div>
+      <div class="hp">
+        <div style="font-size:8px;letter-spacing:2px">SPIRIT</div>
+        <div id="hrow"></div>
+      </div>
       <div class="hp" id="sbox">⭐ 0</div>
       <div class="hp" id="zbox">Zone 1</div>
       <div class="hp" id="ebox">⚔ 0</div>
     </div>
-    <div id="bossbar"><div class="bl">👹 HEAD SLAVE CATCHER</div><div class="bt"><div class="bf" id="bossHpBar" style="width:100%"></div></div></div>
+    <div id="bossbar">
+      <div class="bl">👹 HEAD SLAVE CATCHER</div>
+      <div class="bt"><div class="bf" id="bossHpBar" style="width:100%"></div></div>
+    </div>
+    <div id="wavemsg">⚠ Slave catchers patrol — find the Ancestors!</div>
     <div id="banner"><div id="btitle"></div><div id="bsub"></div></div>
     <div id="notif"></div>
-    <div id="dlg"><div id="dlgname"></div><div id="dlgtxt"></div><div class="cont">▼ TAP TO CONTINUE</div></div>
-    <div id="kblegend">
-      <span><kbd>WASD</kbd>/<kbd>Arrows</kbd> Move</span>
-      <span><kbd>Space</kbd>/<kbd>Z</kbd> Sword</span>
-      <span><kbd>E</kbd>/<kbd>Enter</kbd> Talk</span>
-      <span><kbd>X</kbd> Take</span>
-      <span><kbd>M</kbd> Map</span>
+    <div id="dlg">
+      <div id="dlgname"></div>
+      <div id="dlgtxt"></div>
+      <div class="cont">▼ TAP TO CONTINUE</div>
     </div>
+    <div id="kbhint">WASD/Arrows · Space=Sword · E=Talk · X=Take · M=Map</div>
   </div>
+
+  <!-- Quiz (fixed overlay) -->
   <div id="quiz">
     <h2>📚 KNOWLEDGE TEST</h2>
     <div class="qsub" id="qsub"></div>
@@ -178,20 +225,18 @@ canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
     <div class="qresult" id="qresult"></div>
     <button class="qnext" id="qnext" onclick="quizNext()">NEXT ▶</button>
   </div>
-  <div id="ov">
-    <div id="ovtitle"></div><div id="ovsub"></div>
-    <button class="rbtn" onclick="restartGame()">↺ PLAY AGAIN</button>
-  </div>
+
+  <!-- Touch controller -->
   <div id="ctrl">
     <div class="dpad">
       <div></div>
-      <div class="db" ontouchstart="kd('u')" ontouchend="ku('u')" onmousedown="kd('u')" onmouseup="ku('u')">▲</div>
+      <div class="db" id="dU" ontouchstart="kd('u')" ontouchend="ku('u')" onmousedown="kd('u')" onmouseup="ku('u')">▲</div>
       <div></div>
-      <div class="db" ontouchstart="kd('l')" ontouchend="ku('l')" onmousedown="kd('l')" onmouseup="ku('l')">◀</div>
+      <div class="db" id="dL" ontouchstart="kd('l')" ontouchend="ku('l')" onmousedown="kd('l')" onmouseup="ku('l')">◀</div>
       <div class="dc db"></div>
-      <div class="db" ontouchstart="kd('r')" ontouchend="ku('r')" onmousedown="kd('r')" onmouseup="ku('r')">▶</div>
+      <div class="db" id="dR" ontouchstart="kd('r')" ontouchend="ku('r')" onmousedown="kd('r')" onmouseup="ku('r')">▶</div>
       <div></div>
-      <div class="db" ontouchstart="kd('d')" ontouchend="ku('d')" onmousedown="kd('d')" onmouseup="ku('d')">▼</div>
+      <div class="db" id="dD" ontouchstart="kd('d')" ontouchend="ku('d')" onmousedown="kd('d')" onmouseup="ku('d')">▼</div>
       <div></div>
     </div>
     <div class="abtns">
@@ -201,54 +246,51 @@ canvas{position:absolute;top:0;left:0;width:100%;height:100%;display:block;}
       <div class="ab mp" ontouchstart="mapDlg()" onmousedown="mapDlg()">🗺</div>
     </div>
   </div>
-  <div id="ov"><div id="ovtitle"></div><div id="ovsub"></div><button class="rbtn" onclick="restartGame()">↺ PLAY AGAIN</button></div>
-</div>
+
+  <!-- Game Over / Win -->
+  <div id="ov">
+    <div id="ovtitle"></div>
+    <div id="ovsub"></div>
+    <button class="rbtn" onclick="restartGame()">↺ PLAY AGAIN</button>
+  </div>
+
+</div><!-- #game -->
 
 <script>
-// ══════ CANVAS — true globals, never reset ══════
-const CVS=document.getElementById('cvs');
-let CTX,VW,VH;
+// ══════════════════════════════════════════════════════════════
+// CANVAS SETUP — the ONLY place we touch canvas/CTX
+// Rule: setTransform() not scale() — absolute not cumulative
+// ══════════════════════════════════════════════════════════════
+const CVS = document.getElementById('cvs');
+let CTX, VW, VH;
 
-// Prevent iOS rubber-band scroll during gameplay
-document.addEventListener('touchmove', e=>e.preventDefault(), {passive:false});
-document.addEventListener('touchstart', e=>{if(e.touches.length>1)e.preventDefault();}, {passive:false});
 function resizeCvs(){
   const wrap = document.getElementById('canvasWrap');
-  if(!wrap) return;
+  // clientWidth/Height give the actual CSS pixel size of the element
+  const w = wrap.clientWidth;
+  const h = wrap.clientHeight;
+  if(w < 10 || h < 10) return; // not laid out yet — skip
   const dpr = window.devicePixelRatio || 1;
-  // Get real canvas display dimensions
-  VW = wrap.clientWidth;
-  VH = wrap.clientHeight;
-  if(VW < 10 || VH < 10) return;  // layout not ready
-  // Size the canvas buffer to match display * dpr
-  CVS.width  = Math.round(VW * dpr);
-  CVS.height = Math.round(VH * dpr);
-  // ALWAYS use setTransform (absolute — never accumulates like scale())
+  VW = w;
+  VH = h;
+  CVS.width  = Math.round(w * dpr);
+  CVS.height = Math.round(h * dpr);
+  // setTransform is ABSOLUTE — calling it again resets, never accumulates
   CTX = CVS.getContext('2d');
   CTX.setTransform(dpr, 0, 0, dpr, 0, 0);
 }
-let _rPending = false;
+
+// Debounced resize — rebuilds context cleanly
+let _resizeTimer;
 window.addEventListener('resize', ()=>{
-  if(_rPending) return;
-  _rPending = true;
-  setTimeout(()=>{ _rPending=false; resizeCvs(); }, 200);
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(resizeCvs, 150);
 });
-document.addEventListener('touchmove',  e=>e.preventDefault(), {passive:false});
-document.addEventListener('touchstart', e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
-function applyInputMode(){
-  // Force touch controls visible on phones regardless of media query
-  const isCoarse = window.matchMedia('(pointer:coarse)').matches;
-  const ctrl = document.getElementById('ctrl');
-  if(ctrl) ctrl.style.display = isCoarse ? 'flex' : 'none';
-  const kb = document.getElementById('kblegend');
-  if(kb)   kb.style.display   = isCoarse ? 'none' : 'flex';
-}
-window.addEventListener('touchstart', ()=>{
-  const ctrl = document.getElementById('ctrl');
-  if(ctrl) ctrl.style.display = 'flex';
-  const kb = document.getElementById('kblegend');
-  if(kb)   kb.style.display   = 'none';
-}, {once:true})
+
+// Prevent scroll/zoom on touch
+document.addEventListener('touchmove',  e => e.preventDefault(), {passive:false});
+document.addEventListener('touchstart', e => { if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
+
 
 // ══════ TILE CONSTANTS ══════
 const TS=48,COLS=24,ROWS=18,WW=COLS*TS,WH=ROWS*TS;
@@ -463,17 +505,15 @@ const ITEMS=[
   {zone:4,tc:15,tr:10,emoji:'🪑',label:'Rosa\'s Seat',lore:'December 1, 1955 — Rosa Parks refused to give up her seat on a Montgomery bus. Her arrest sparked a 381-day boycott that ended bus segregation and ignited the Civil Rights Movement.'},
 ];
 
-// ══════ ENEMY SPAWNS ══════
-// Player starts at tile 11,7. Camera shows ~8x13 tiles on phone.
-// Spawns placed within that visible area.
-function mkSp(tc,tr){return{px:tc*TS+24,py:tr*TS+24};}
+// ══════ ENEMY SPAWNS per zone ══════
 const ESPAWNS=[
-  [mkSp(8,3),mkSp(14,3),mkSp(8,12),mkSp(14,12)],
-  [mkSp(8,3),mkSp(14,3),mkSp(8,12),mkSp(14,12),mkSp(11,3)],
-  [mkSp(8,3),mkSp(14,3),mkSp(8,12),mkSp(14,12),mkSp(11,12)],
-  [mkSp(8,3),mkSp(14,3),mkSp(8,12),mkSp(14,12),mkSp(9,3),mkSp(13,12)],
-  [],
+  [[4,10],[14,9],[8,14],[19,8],[11,12]].map(([c,r])=>({px:c*TS+24,py:r*TS+24})),
+  [[3,7],[19,7],[11,11],[6,14],[16,14],[12,5]].map(([c,r])=>({px:c*TS+24,py:r*TS+24})),
+  [[5,9],[18,9],[11,5],[11,14],[4,14],[19,14]].map(([c,r])=>({px:c*TS+24,py:r*TS+24})),
+  [[4,10],[19,10],[11,11],[6,14],[17,14],[11,6],[3,6],[20,6]].map(([c,r])=>({px:c*TS+24,py:r*TS+24})),
+  [],// boss zone — no normal spawns
 ];
+
 // ══════ BOSS ══════
 let boss=null,bossActive=false;
 const BOSS_MAXHP=40;
@@ -538,22 +578,29 @@ function startBoss(){
 }
 
 // ══════ START ══════
+
+// ══════ START ══════
 function startGame(){
-  document.getElementById('title').style.display='none';
-  document.getElementById('game').style.display='flex';
-  applyInputMode();
-  // Double rAF: first frame sets display, second frame has real layout dimensions
-  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+  // 1. Show the game div
+  document.getElementById('title').style.display = 'none';
+  document.getElementById('game').style.display  = 'flex';
+  // 2. Wait TWO animation frames so the browser actually lays out #game
+  //    before we measure canvasWrap dimensions
+  requestAnimationFrame(() => requestAnimationFrame(() => {
     resizeCvs();
-    if(!CTX){ console.error('Canvas context failed'); return; }
-    resetState();buildHearts();updHUD();showBanner(0);
-    setTimeout(()=>notify('🌟 D-pad: move  ⚔️: attack  🤝: talk  📖: take artifacts'),800);
-    setTimeout(()=>openDlg('THE ANCESTORS CALL','You stand on the Plantation — Zone 1 of 5. Find HARRIET TUBMAN and DENMARK VESEY. Defeat slave catchers, pass the quiz, open the portal south.'),2200);
+    if(!CTX){ alert('Canvas failed to init — try refreshing'); return; }
+    resetState();
+    buildHearts();
+    updHUD();
+    showBanner(0);
     requestAnimationFrame(gameLoop);
+    setTimeout(()=>notify('🌟 D-pad: move  ⚔️: attack  🤝: talk  📖: take  🗺: map'), 800);
+    setTimeout(()=>openDlg('THE ANCESTORS CALL',
+      'You stand on the Plantation — Zone 1 of 5. Find HARRIET TUBMAN and DENMARK VESEY. Defeat slave catchers, pass the quiz, open the portal south.'), 2200);
   }));
 }
-
 function restartGame(){
+  resizeCvs();
   resetState();buildHearts();updHUD();showBanner(0);
 }
 
@@ -690,7 +737,8 @@ function autoSpawn(){
   spawnTimer=0;
   if(enemies.filter(e=>!e.dead).length>=zi.maxE)return;
   const sps=ESPAWNS[zone];
-  const sp=sps[Math.floor(Math.random()*sps.length)];
+  const far=sps.filter(s=>Math.hypot(px-s.px,py-s.py)>TS*6);
+  const sp=(far.length?far:sps)[Math.floor(Math.random()*(far.length||sps.length))];
   enemies.push(mkEnemy(sp.px,sp.py));
   notify('⚠ Another slave catcher approaches!');
 }
@@ -1290,7 +1338,6 @@ document.addEventListener('keydown',e=>{
   if([' ','z'].includes(e.key)){sword();e.preventDefault();}
   if(['Enter','e'].includes(e.key))doTalk();
   if('x'===e.key)doTake();
-  if(e.key.toLowerCase()==='m')mapDlg();
 });
 document.addEventListener('keyup',e=>{
   if(['ArrowLeft','a'].includes(e.key))ku('l');
@@ -1300,6 +1347,10 @@ document.addEventListener('keyup',e=>{
 });
 function kd(dir){keys[dir]=1;document.getElementById({u:'dU',d:'dD',l:'dL',r:'dR'}[dir])?.classList.add('on');}
 function ku(dir){keys[dir]=0;document.getElementById({u:'dU',d:'dD',l:'dL',r:'dR'}[dir])?.classList.remove('on');}
+// M key for map
+document.addEventListener('keydown', e=>{
+  if(e.key.toLowerCase()==='m') mapDlg();
+});
 </script>
 </body>
 </html>
