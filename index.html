@@ -127,14 +127,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
   flex-direction:row;
   align-items:center;
   justify-content:space-between;
-  padding:8px 12px max(8px,env(safe-area-inset-bottom));
+  padding:8px 8px max(8px,env(safe-area-inset-bottom));
   background:linear-gradient(180deg,#0c0700,#060400);
   border-top:2px solid #2a1800;
   gap:0;
 }
 /* Analog joystick */
 #joystick{
-  width:164px;height:164px;
+  width:148px;height:148px;
   border-radius:50%;
   background:rgba(212,175,55,.08);
   border:2px solid rgba(212,175,55,.3);
@@ -155,21 +155,32 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
 }
 
 /* Action buttons: single column, 4 tall */
+/* Action panel: sword on left, 3 buttons stacked on right */
 .abtns{
   display:flex;
-  flex-direction:column;
+  flex-direction:row;
   gap:6px;
   flex-shrink:0;
-  justify-content:center;
+  align-items:center;
+}
+.sw{
+  width:111px;height:111px;border-radius:50%;border:2.5px solid;
+  cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;
+  display:flex;align-items:center;justify-content:center;
+  font-size:42px;flex-shrink:0;
+}
+.abside{
+  display:flex;flex-direction:column;gap:5px;justify-content:center;
 }
 .ab{
-  width:56px;height:42px;border-radius:21px;border:2.5px solid;
+  width:54px;height:44px;border-radius:22px;border:2.5px solid;
   cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;
   display:flex;flex-direction:row;align-items:center;justify-content:center;
   gap:4px;font-size:10px;font-weight:bold;line-height:1;
 }
 .ab:active{transform:scale(.84);}
-.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:18px!important;}
+.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;}
+.ab:active,.sw:active{transform:scale(.84);}
 .tk{background:rgba(140,0,0,.8);border-color:#FF6B35;color:#FFD4B8;}
 .ta{background:rgba(20,80,30,.8);border-color:#4CAF80;color:#B8FFD4;}
 .mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:14px!important;}
@@ -243,10 +254,12 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
       <div id="jstick"></div>
     </div>
     <div class="abtns">
-      <div class="ab sw" ontouchstart="sword()" onmousedown="sword()">⚔️</div>
-      <div class="ab tk" ontouchstart="doTalk()" onmousedown="doTalk()">🤝 TALK</div>
-      <div class="ab ta" ontouchstart="doTake()" onmousedown="doTake()">📖 TAKE</div>
-      <div class="ab mp" ontouchstart="mapDlg()" onmousedown="mapDlg()">🗺</div>
+      <div class="sw" ontouchstart="sword()" onmousedown="sword()">⚔️</div>
+      <div class="abside">
+        <div class="ab tk" ontouchstart="doTalk()" onmousedown="doTalk()">🤝 TALK</div>
+        <div class="ab ta" ontouchstart="doTake()" onmousedown="doTake()">📖 TAKE</div>
+        <div class="ab mp" ontouchstart="mapDlg()" onmousedown="mapDlg()">🗺</div>
+      </div>
     </div>
   </div>
 
@@ -1360,7 +1373,7 @@ document.addEventListener('keydown', e=>{
   const joy = document.getElementById('joystick');
   const stick = document.getElementById('jstick');
   if(!joy) return;
-  const R = 82;   // joystick base radius
+  const R = 74;   // joystick base radius
   const DEAD = 12; // deadzone px
   let active = false, baseX = 0, baseY = 0;
 
