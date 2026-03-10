@@ -150,7 +150,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
 
 /* Action buttons: ~17vw, clamped 58-72px */
 .abtns{
-  --ab: clamp(58px, 17vw, 72px);
+  --ab: clamp(44px, 12vw, 47px);
   display:grid;
   grid-template-columns:var(--ab) var(--ab);
   gap:clamp(6px,2vw,10px);
@@ -160,13 +160,13 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
   width:var(--ab);height:var(--ab);border-radius:50%;border:2.5px solid;
   cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:clamp(9px,2.5vw,11px);font-weight:bold;line-height:1.3;
+  font-size:clamp(8px,2vw,10px);font-weight:bold;line-height:1.3;
 }
 .ab:active{transform:scale(.84);}
-.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:clamp(20px,6vw,26px)!important;}
+.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:clamp(16px,5vw,20px)!important;}
 .tk{background:rgba(140,0,0,.8);border-color:#FF6B35;color:#FFD4B8;}
 .ta{background:rgba(20,80,30,.8);border-color:#4CAF80;color:#B8FFD4;}
-.mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:clamp(14px,4vw,18px)!important;}
+.mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:clamp(12px,3vw,14px)!important;}
 
 /* Desktop: hide controller, show keyboard hint */
 #kbhint{display:none;position:absolute;bottom:8px;right:8px;
