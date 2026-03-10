@@ -118,50 +118,55 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
   border-radius:38px;cursor:pointer;font-family:Georgia,serif;min-height:52px;}
 
 /* ── TOUCH CONTROLLER ── */
+/* Button size scales with screen width so it always fits */
 #ctrl{
   flex:0 0 auto;
-  height:200px;
+  height:clamp(170px,25vw,210px);
   display:flex;
   flex-direction:row;
   align-items:center;
   justify-content:space-between;
-  padding:8px 20px max(8px,env(safe-area-inset-bottom));
+  padding:6px 16px max(6px,env(safe-area-inset-bottom));
   background:linear-gradient(180deg,#0c0700,#060400);
   border-top:2px solid #2a1800;
-  gap:8px;
+  gap:6px;
 }
+/* D-pad: button size = ~14.5vw, clamped 48-64px */
 .dpad{
+  --db: clamp(48px, 14.5vw, 64px);
   display:grid;
-  grid-template-columns:64px 64px 64px;
-  grid-template-rows:64px 64px 64px;
-  gap:4px;
+  grid-template-columns:var(--db) var(--db) var(--db);
+  grid-template-rows:var(--db) var(--db) var(--db);
+  gap:3px;
 }
 .db{
   background:rgba(212,175,55,.2);border:2px solid rgba(212,175,55,.45);
-  border-radius:10px;display:flex;align-items:center;justify-content:center;
-  color:#D4AF37;font-size:24px;cursor:pointer;user-select:none;
+  border-radius:8px;display:flex;align-items:center;justify-content:center;
+  color:#D4AF37;font-size:clamp(18px,5vw,24px);cursor:pointer;user-select:none;
   -webkit-user-select:none;touch-action:none;
 }
 .db:active{background:rgba(212,175,55,.6);border-color:#FFD700;}
 .dc{background:transparent!important;border-color:transparent!important;pointer-events:none;}
 
+/* Action buttons: ~17vw, clamped 58-72px */
 .abtns{
+  --ab: clamp(58px, 17vw, 72px);
   display:grid;
-  grid-template-columns:72px 72px;
-  gap:10px;
+  grid-template-columns:var(--ab) var(--ab);
+  gap:clamp(6px,2vw,10px);
   align-content:center;
 }
 .ab{
-  width:72px;height:72px;border-radius:50%;border:2.5px solid;
+  width:var(--ab);height:var(--ab);border-radius:50%;border:2.5px solid;
   cursor:pointer;user-select:none;-webkit-user-select:none;touch-action:none;
   display:flex;flex-direction:column;align-items:center;justify-content:center;
-  font-size:11px;font-weight:bold;line-height:1.3;
+  font-size:clamp(9px,2.5vw,11px);font-weight:bold;line-height:1.3;
 }
 .ab:active{transform:scale(.84);}
-.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:26px!important;}
+.sw{background:rgba(160,140,0,.85);border-color:#FFD700;color:#fff8cc;font-size:clamp(20px,6vw,26px)!important;}
 .tk{background:rgba(140,0,0,.8);border-color:#FF6B35;color:#FFD4B8;}
 .ta{background:rgba(20,80,30,.8);border-color:#4CAF80;color:#B8FFD4;}
-.mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:18px!important;}
+.mp{background:rgba(20,40,100,.8);border-color:#90CAF9;color:#ddeeff;font-size:clamp(14px,4vw,18px)!important;}
 
 /* Desktop: hide controller, show keyboard hint */
 #kbhint{display:none;position:absolute;bottom:8px;right:8px;
