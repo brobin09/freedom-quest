@@ -209,6 +209,53 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
 .farmeter{width:44px;height:4px;background:rgba(0,0,0,0.5);border-radius:2px;overflow:hidden;}
 #farfill{height:100%;width:0%;background:linear-gradient(90deg,#7C4DFF,#E0B0FF);transition:width 0.2s;}
 
+/* ============ LANDSCAPE MODE (phone/tablet horizontal) ============ */
+/* Controls float over the sides so the canvas keeps the full screen,
+   like a handheld emulator. Only applies to touch devices in landscape. */
+@media (orientation:landscape) and (pointer:coarse){
+  #game{ flex-direction:row; }         /* canvas fills everything */
+  #canvasWrap{ width:100%; height:100%; }
+  /* Controller becomes a transparent full-screen overlay */
+  #ctrl{
+    position:absolute; inset:0;
+    height:auto; background:none; border-top:none;
+    padding:0; pointer-events:none;    /* let taps pass except on buttons */
+    display:block;
+  }
+  /* Joystick floats bottom-left */
+  #ctrl > #joystick{
+    position:absolute;
+    left:max(16px,env(safe-area-inset-left));
+    bottom:max(16px,env(safe-area-inset-bottom));
+    width:132px; height:132px;
+    background:rgba(212,175,55,.10);
+    pointer-events:auto;
+  }
+  /* Action cluster floats bottom-right */
+  #ctrl > .abtns{
+    position:absolute;
+    right:max(16px,env(safe-area-inset-right));
+    bottom:max(16px,env(safe-area-inset-bottom));
+    pointer-events:auto;
+  }
+  .sw{ width:96px; height:96px; font-size:38px; }
+  /* Slightly translucent so they don't fully block the scene */
+  #ctrl > #joystick, #ctrl .sw, #ctrl .ab{ opacity:0.92; }
+}
+/* Rotate hint — nudges toward landscape on small screens in portrait */
+#rotateHint{
+  display:none; position:absolute; bottom:210px; left:50%;
+  transform:translateX(-50%); z-index:14;
+  background:rgba(4,2,0,0.8); border:1px solid rgba(212,175,55,.5);
+  color:#e8dcc0; font-family:Georgia,serif; font-size:11px;
+  padding:5px 12px; border-radius:14px; pointer-events:none;
+  animation:rhpulse 2.5s ease-in-out infinite;
+}
+@keyframes rhpulse{0%,100%{opacity:.5;}50%{opacity:1;}}
+@media (orientation:portrait) and (pointer:coarse) and (max-height:560px){
+  #rotateHint{ display:block; }
+}
+
 /* Desktop: hide controller, show keyboard hint */
 #kbhint{display:none;position:absolute;bottom:8px;right:8px;
   color:rgba(212,175,55,.5);font-size:10px;pointer-events:none;letter-spacing:1px;z-index:15;}
@@ -268,6 +315,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
       <div class="cont">▼ TAP TO CONTINUE</div>
     </div>
     <div id="kbhint">WASD/Arrows · Space=Sword · E=Talk · X=Take · M=Map</div>
+    <div id="rotateHint">↻ Turn your device sideways for a bigger view</div>
   </div>
 
   <!-- Quiz (fixed overlay) -->
@@ -334,10 +382,28 @@ function resizeCvs(){
 
 // Debounced resize — rebuilds context cleanly
 let _resizeTimer;
-window.addEventListener('resize', ()=>{
+function scheduleResize(){
   clearTimeout(_resizeTimer);
   _resizeTimer = setTimeout(resizeCvs, 150);
-});
+}
+window.addEventListener('resize', scheduleResize);
+// Orientation change: the viewport size updates a beat AFTER the event,
+// so wait two animation frames (and a fallback timeout) before measuring.
+function handleOrientation(){
+  requestAnimationFrame(()=>requestAnimationFrame(()=>{
+    resizeCvs();
+    // keep camera centered on the player after the aspect ratio changes
+    if(typeof px!=='undefined'){ camx=px-VW/2; camy=py-VH/2; }
+  }));
+  setTimeout(resizeCvs, 300);   // safety net for slow layout
+}
+window.addEventListener('orientationchange', handleOrientation);
+if(window.matchMedia){
+  const mq=window.matchMedia('(orientation:landscape)');
+  const mqHandler=()=>handleOrientation();
+  if(mq.addEventListener)mq.addEventListener('change',mqHandler);
+  else if(mq.addListener)mq.addListener(mqHandler);
+}
 
 // Prevent scroll/zoom on touch
 document.addEventListener('touchmove',  e => e.preventDefault(), {passive:false});
@@ -1227,8 +1293,12 @@ function solidE(wx,wy){
 function smoothCam(){
   const tx=px-VW/2,ty=py-VH/2;
   camx+=(tx-camx)*0.12;camy+=(ty-camy)*0.12;
-  camx=Math.max(0,Math.min(WW-VW,camx));
-  camy=Math.max(0,Math.min(WH-VH,camy));
+  // If the viewport is wider/taller than the world (big landscape screens),
+  // center the world instead of clamping to a negative offset.
+  if(VW>=WW) camx=(WW-VW)/2;
+  else camx=Math.max(0,Math.min(WW-VW,camx));
+  if(VH>=WH) camy=(WH-VH)/2;
+  else camy=Math.max(0,Math.min(WH-VH,camy));
 }
 function spawnPfx(wx,wy,col,em,n){
   for(let i=0;i<n;i++){
