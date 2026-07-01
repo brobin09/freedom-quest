@@ -59,6 +59,23 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
     padding:3px 8px;color:#D4AF37;font-size:clamp(10px,2.5vw,13px);letter-spacing:1px;}
 #hrow{display:flex;gap:2px;margin-top:2px;font-size:clamp(13px,3.5vw,17px);}
 
+#objtracker{
+  position:absolute;top:52px;left:8px;z-index:11;
+  background:rgba(4,2,0,0.82);border:1.5px solid rgba(212,175,55,0.5);
+  border-radius:9px;padding:5px 8px;pointer-events:none;
+  font-family:Georgia,serif;min-width:120px;
+}
+.objrow{display:flex;align-items:center;gap:5px;margin:2px 0;font-size:10px;color:#e8dcc0;}
+.objicon{font-size:11px;}
+.objtxt{flex:1;letter-spacing:0.5px;}
+.objcount{color:#D4AF37;font-weight:bold;font-size:10px;}
+.objrow.done .objcount{color:#69F0AE;}
+.objrow.done .objtxt{color:#9fd8a8;}
+.objbonus .objicon,.objbonus .objcount{color:#B388FF;}
+.objbonus.done .objcount{color:#69F0AE;}
+.objgate{margin-top:4px;padding-top:4px;border-top:1px solid rgba(212,175,55,0.25);}
+.objgate .objtxt{font-size:9px;font-style:italic;color:#c8956e;}
+.objgate.open .objtxt{color:#69F0AE;font-style:normal;}
 #bossbar{position:absolute;top:44px;left:6%;right:6%;display:none;z-index:12;}
 #bossbar .bl{font-size:11px;color:#FF1744;text-align:center;letter-spacing:2px;margin-bottom:3px;}
 #bossbar .bt{height:13px;background:#330000;border:1px solid #FF1744;border-radius:6px;overflow:hidden;}
@@ -229,6 +246,14 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
       <div class="hp" id="sbox">⭐ 0</div>
       <div class="hp" id="zbox">Zone 1</div>
       <div class="hp" id="ebox">⚔ 0</div>
+      <div class="hp" id="sndbtn" style="pointer-events:auto;cursor:pointer;" onclick="toggleSound()">🔊</div>
+    </div>
+    <div id="objtracker">
+      <div class="objrow" id="obj-anc"><span class="objicon">🧑🏿</span><span class="objtxt">Ancestors</span><span class="objcount" id="objAnc">0/0</span></div>
+      <div class="objrow" id="obj-art"><span class="objicon">📜</span><span class="objtxt">Artifacts</span><span class="objcount" id="objArt">0/0</span></div>
+      <div class="objrow" id="obj-quiz"><span class="objicon">📚</span><span class="objtxt">Quiz</span><span class="objcount" id="objQuiz">▢</span></div>
+      <div class="objrow objbonus" id="obj-lore"><span class="objicon">◆</span><span class="objtxt">Bonus lore</span><span class="objcount" id="objLore">0/0</span></div>
+      <div class="objrow objgate" id="obj-gate"><span class="objicon">🚪</span><span class="objtxt" id="objGateTxt">Portal locked</span></div>
     </div>
     <div id="bossbar">
       <div class="bl">👹 HEAD SLAVE CATCHER</div>
@@ -319,6 +344,86 @@ document.addEventListener('touchmove',  e => e.preventDefault(), {passive:false}
 document.addEventListener('touchstart', e => { if(e.touches.length > 1) e.preventDefault(); }, {passive:false});
 
 
+
+// ══════════════════════════════════════════════════════════════
+// SOUND ENGINE — procedural Web Audio, no files needed
+// ══════════════════════════════════════════════════════════════
+let AC=null, masterGain=null, soundOn=true;
+function initAudio(){
+  if(AC)return;
+  try{
+    AC=new (window.AudioContext||window.webkitAudioContext)();
+    masterGain=AC.createGain();
+    masterGain.gain.value=0.35;
+    masterGain.connect(AC.destination);
+  }catch(e){ soundOn=false; }
+}
+// Play a synthesized tone
+function tone(freq,dur,type='square',vol=1,slideTo=null,delay=0){
+  if(!AC||!soundOn)return;
+  const t=AC.currentTime+delay;
+  const osc=AC.createOscillator();
+  const g=AC.createGain();
+  osc.type=type;
+  osc.frequency.setValueAtTime(freq,t);
+  if(slideTo)osc.frequency.exponentialRampToValueAtTime(Math.max(1,slideTo),t+dur);
+  g.gain.setValueAtTime(0.0001,t);
+  g.gain.exponentialRampToValueAtTime(vol,t+0.008);
+  g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  osc.connect(g);g.connect(masterGain);
+  osc.start(t);osc.stop(t+dur+0.02);
+}
+// Noise burst (for impacts/explosions)
+function noise(dur,vol=1,filterFreq=1200,delay=0){
+  if(!AC||!soundOn)return;
+  const t=AC.currentTime+delay;
+  const n=Math.floor(AC.sampleRate*dur);
+  const buf=AC.createBuffer(1,n,AC.sampleRate);
+  const data=buf.getChannelData(0);
+  for(let i=0;i<n;i++)data[i]=(Math.random()*2-1)*(1-i/n);
+  const src=AC.createBufferSource();src.buffer=buf;
+  const flt=AC.createBiquadFilter();flt.type='lowpass';flt.frequency.value=filterFreq;
+  const g=AC.createGain();g.gain.setValueAtTime(vol,t);g.gain.exponentialRampToValueAtTime(0.0001,t+dur);
+  src.connect(flt);flt.connect(g);g.connect(masterGain);
+  src.start(t);src.stop(t+dur);
+}
+function sfx(name){
+  if(!AC||!soundOn)return;
+  switch(name){
+    case 'shoot':  tone(320,0.08,'square',0.5,120); break;
+    case 'plasma': tone(700,0.14,'sawtooth',0.4,180); tone(1100,0.1,'sine',0.2,400); break;
+    case 'swing':  noise(0.12,0.4,2500); tone(200,0.1,'triangle',0.3,90); break;
+    case 'hit':    noise(0.09,0.6,1800); tone(160,0.07,'square',0.4,80); break;
+    case 'kill':   noise(0.22,0.7,900); tone(120,0.2,'sawtooth',0.5,40); break;
+    case 'hurt':   tone(200,0.25,'sawtooth',0.6,60); noise(0.15,0.5,700); break;
+    case 'shield': tone(600,0.15,'sine',0.4,900); tone(900,0.1,'sine',0.25,1300); break;
+    case 'death':  tone(300,0.6,'sawtooth',0.6,50); noise(0.4,0.5,500,0.1); break;
+    case 'far':    // triumphant chord sweep
+      tone(392,0.5,'sawtooth',0.4,784);   // G
+      tone(523,0.5,'sawtooth',0.35,1046,0.05); // C
+      tone(659,0.6,'sine',0.3,1318,0.1);  // E
+      noise(0.5,0.4,1500); break;
+    case 'pickup': tone(660,0.08,'square',0.4,990); tone(990,0.12,'square',0.35,1320,0.06); break;
+    case 'portal': tone(440,0.3,'sine',0.4,880); tone(660,0.3,'sine',0.3,1320,0.1); break;
+    case 'talk':   tone(500,0.06,'triangle',0.3,600); break;
+    case 'quiz_right': tone(660,0.1,'square',0.4,880); tone(880,0.15,'square',0.4,1100,0.1); break;
+    case 'quiz_wrong': tone(300,0.2,'sawtooth',0.4,150); break;
+    case 'win':    [523,659,784,1046].forEach((f,i)=>tone(f,0.4,'sawtooth',0.35,null,i*0.12)); break;
+    case 'ambush': tone(150,0.4,'sawtooth',0.6,80); noise(0.3,0.5,600); break;
+  }
+}
+// Resume audio on first interaction (browsers block autoplay)
+function unlockAudio(){ initAudio(); if(AC&&AC.state==='suspended')AC.resume(); }
+function toggleSound(){
+  soundOn=!soundOn;
+  const b=document.getElementById('sndbtn');
+  if(b)b.textContent=soundOn?'🔊':'🔇';
+  if(soundOn){unlockAudio();sfx('talk');}
+}
+window.addEventListener('touchstart',unlockAudio,{once:false});
+window.addEventListener('mousedown',unlockAudio,{once:false});
+window.addEventListener('keydown',unlockAudio,{once:false});
+
 // ══════ TILE CONSTANTS ══════
 const TS=40,COLS=24,ROWS=18,WW=COLS*TS,WH=ROWS*TS;
 const GR=0,DT=1,PT=2,WA=3,TR=4,WL=5,HO=6,FL=7,SA=8,PO=9,CO=10,FD=11,ST=12,RD=13,SW=14,SC=15;
@@ -369,7 +474,7 @@ const M1=[
   [TR,GR,WA,WA,GR,GR,PT,PT,PT,PT,PT,PT,PT,PT,PT,PT,PT,PT,GR,GR,WA,WA,GR,TR],
   [TR,FL,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,FL,TR],
   [TR,GR,GR,GR,GR,FL,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,FL,GR,GR,GR,GR,GR,TR],
-  [PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,PO],
+  [PO,GR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,GR,PO],
 ];
 // Zone 2: Free North / Reconstruction (medium-hard)
 const M2=[
@@ -390,7 +495,7 @@ const M2=[
   [TR,GR,FL,GR,PT,GR,GR,GR,FL,GR,GR,GR,GR,GR,GR,FL,GR,GR,GR,GR,PT,GR,FL,TR],
   [TR,GR,GR,GR,PT,GR,FL,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,FL,GR,GR,PT,GR,GR,TR],
   [TR,GR,GR,GR,PT,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,PT,GR,GR,TR],
-  [PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO],
+  [PO,GR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,GR,PO],
 ];
 // Zone 3: Jim Crow / Great Migration (hard)
 const M3=[
@@ -411,12 +516,12 @@ const M3=[
   [TR,GR,FL,RD,GR,GR,GR,GR,FL,GR,GR,GR,GR,GR,GR,FL,GR,GR,GR,GR,RD,GR,FL,TR],
   [TR,GR,GR,RD,GR,ST,ST,ST,GR,FL,GR,GR,GR,GR,FL,GR,ST,ST,ST,GR,RD,GR,GR,TR],
   [TR,GR,GR,RD,GR,ST,ST,ST,GR,GR,GR,GR,GR,GR,GR,GR,ST,ST,ST,GR,RD,GR,GR,TR],
-  [PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO],
+  [PO,GR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,GR,PO],
 ];
 // Zone 4: Civil Rights Era — BOSS ARENA (very hard)
 const M4=[
   [TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR],
-  [TR,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,TR],
+  [TR,ST,ST,ST,ST,GR,GR,GR,ST,ST,ST,GR,ST,ST,GR,GR,GR,ST,ST,ST,ST,ST,ST,TR],
   [TR,ST,RD,RD,RD,RD,ST,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,ST,RD,RD,RD,RD,ST,TR],
   [TR,ST,RD,GR,GR,RD,ST,GR,FL,GR,GR,GR,GR,GR,GR,GR,FL,ST,RD,GR,GR,RD,ST,TR],
   [TR,ST,RD,GR,GR,RD,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,RD,GR,GR,RD,ST,TR],
@@ -450,9 +555,9 @@ const MHARLEM=[
   [TR,ST,ST,ST,ST,GR,GR,GR,ST,ST,ST,ST,ST,ST,GR,GR,GR,ST,ST,ST,ST,ST,ST,TR],
   [TR,ST,HO,HO,ST,GR,FL,GR,ST,HO,HO,HO,HO,ST,GR,FL,GR,ST,HO,HO,HO,ST,ST,TR],
   [TR,ST,HO,HO,ST,GR,GR,GR,ST,HO,HO,HO,HO,ST,GR,GR,GR,ST,HO,HO,HO,ST,ST,TR],
-  [TR,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,ST,TR],
+  [TR,ST,ST,ST,ST,GR,GR,GR,ST,ST,ST,GR,ST,ST,GR,GR,GR,ST,ST,ST,ST,ST,ST,TR],
   [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
-  [PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO],
+  [PO,GR,TR,TR,TR,TR,TR,TR,TR,TR,TR,PO,TR,TR,TR,TR,TR,TR,TR,TR,TR,TR,GR,PO],
 ];
 const MAPS=[M0,M1,M2,M3,MHARLEM,M4];
 
@@ -585,6 +690,13 @@ const ITEMS=[
   {zone:4,tc:17,tr:5,emoji:'📖',label:'The New Negro',lore:'Alain Locke\'s 1925 anthology announced a new generation — proud, urban, artistic, and unwilling to accept second-class citizenship. The Harlem Renaissance had found its voice.'},
   {zone:5,tc:8,tr:10,emoji:'✊',label:'March on Washington Badge',lore:'August 28, 1963 — 250,000 people gathered at the Lincoln Memorial. Dr. King delivered "I Have a Dream." Sixteen days later the 16th Street Baptist Church was bombed.'},
   {zone:5,tc:15,tr:10,emoji:'🪑',label:'Rosa\'s Seat',lore:'December 1, 1955 — Rosa Parks refused to give up her seat on a Montgomery bus. Her arrest sparked a 381-day boycott that ended bus segregation and ignited the Civil Rights Movement.'},
+  // ── OPTIONAL LORE — extra history to discover, not required ──
+  {zone:0,tc:11,tr:5,emoji:'⛓️',label:'Broken Shackle',optional:true,lore:'The Middle Passage carried an estimated 12.5 million Africans across the Atlantic between 1525 and 1866. Nearly 2 million died during the crossing. Those who survived built the wealth of nations while enslaved — and never stopped resisting.'},
+  {zone:1,tc:8,tr:5,emoji:'🕯️',label:'Station Master\'s Candle',optional:true,lore:'Underground Railroad "stations" were homes, churches, and barns where freedom seekers hid. A lit candle in a window, a specific quilt on a fence, or a particular hymn could signal safety — or danger. The network had no maps; it lived in memory and trust.'},
+  {zone:2,tc:11,tr:5,emoji:'🗳️',label:'Reconstruction Ballot',optional:true,lore:'During Reconstruction, over 1,500 Black men held public office, including 16 in Congress. Hiram Revels became the first Black U.S. Senator in 1870 — filling the seat once held by Jefferson Davis. This progress was violently rolled back within a generation.'},
+  {zone:3,tc:11,tr:5,emoji:'📖',label:'Freedom School Primer',optional:true,lore:'Denied education by law, Black communities built their own schools. Between 1865 and 1870, formerly enslaved people founded thousands of schools. Literacy was resistance — which is exactly why enslavers had made it illegal.'},
+  {zone:4,tc:15,tr:6,emoji:'🎨',label:'Aaron Douglas Mural',optional:true,lore:'The Harlem Renaissance produced not just writers but painters like Aaron Douglas, whose murals fused African imagery with modern art. Jacob Lawrence later chronicled the Great Migration in 60 panels. Black artists were defining American modernism itself.'},
+  {zone:5,tc:11,tr:5,emoji:'🕊️',label:'Freedom Bell',optional:true,lore:'The movement was carried by ordinary people — the students of the sit-ins, the children of the Birmingham marches, the organizers who registered voters at the risk of their lives. Freedom was never granted. It was demanded, again and again, until it could not be denied.'},
 ];
 
 // ══════ ENEMY SPAWNS per zone ══════
@@ -627,6 +739,12 @@ let farCharge=0;               // 0..farMax
 const farMax=100;
 let farBlast=0;                // active blast animation timer
 let farRings=[];               // expanding shockwave rings
+// Game feel
+let shakeAmt=0;      // screen shake magnitude
+let shakeDecay=0.85;
+let hitPause=0;      // frames to freeze the sim for impact weight
+function addShake(amt){ shakeAmt=Math.min(14,shakeAmt+amt); }
+function addHitPause(f){ hitPause=Math.max(hitPause,f); }
 function hasTech(){return zone>=2;}   // shield + plasma + tech armor
 function damagePlayer(dmg,srcx,srcy){
   if(pinv>0)return;
@@ -635,12 +753,13 @@ function damagePlayer(dmg,srcx,srcy){
     shield=Math.max(0,shield-dmg);
     shieldFlash=12; shieldRegen=180; pinv=40;
     spawnPfx(px,py-10,'🛡️',1,10);
+    addShake(4);sfx('shield');
     return;
   }
   php=Math.max(0,php-dmg);pinv=90;buildHearts();
   const dx=px-srcx,dy=py-srcy,l=Math.sqrt(dx*dx+dy*dy)||1;
   pkx=dx/l*7;pky=dy/l*7;
-  flashRed();if(php<=0)doGameOver();
+  flashRed();addShake(8);addHitPause(5);sfx('hurt');if(php<=0){sfx('death');doGameOver();}
 }
 function updateShield(){
   if(!hasTech()){if(shieldMax!==0){shieldMax=0;buildShieldPips();}shield=0;return;}
@@ -669,7 +788,7 @@ function resetState(){
   keys={u:0,d:0,l:0,r:0};
   swActive=false;swTimer=0;swCool=0;bullets=[];muzzle=0;
   shield=0;shieldMax=0;shieldRegen=0;shieldFlash=0;segAmbushed=false;
-  farCharge=0;farBlast=0;farRings=[];
+  farCharge=0;farBlast=0;farRings=[];shakeAmt=0;hitPause=0;
   enemies=[];eidx=0;boss=null;bossActive=false;
   npcState={};NPCS.forEach(n=>npcState[n.id]={met:false,didx:0});
   itemState={};ITEMS.forEach((_,i)=>itemState[i]=false);
@@ -729,6 +848,8 @@ function gameLoop(){
   requestAnimationFrame(gameLoop);
   if(!CTX)return;
   if(gameOver||won||transitioning){render();return;}
+  // Hit-pause: freeze the simulation briefly on impact for weight
+  if(hitPause>0){ hitPause--; render(); return; }
   tick++;
   if(!dlgOpen&&!quizOpen){
     movePlayer();
@@ -879,6 +1000,7 @@ function checkSwordHits(){
   });
 }
 function hitBoss(){
+  addShake(4);addHitPause(3);sfx('hit');
   boss.hp--;
   const dx=boss.px-px,dy=boss.py-py,l=Math.sqrt(dx*dx+dy*dy)||1;
   boss.kx=0;boss.ky=0;boss.ht=8;
@@ -897,10 +1019,12 @@ function hitEnemy(e){
   const dx=e.px-px,dy=e.py-py,l=Math.sqrt(dx*dx+dy*dy)||1;
   e.kx=dx/l*7;e.ky=dy/l*7;e.ht=18;
   spawnPfx(e.px,e.py,'#FF4444','💥',6);
+  addShake(3);addHitPause(2);sfx('hit');
   if(e.hp<=0){
     e.dead=true;e.dt=0;defeated++;score+=e.minion?50:100;updHUD();
     spawnPfx(e.px,e.py,'#D4AF37','★',8);
     gainFAR(e.minion?8:14);
+    addShake(5);addHitPause(4);sfx('kill');
     if(!e.minion&&allMetInZone())notify('✨ All Ancestors spoken to — slave catchers stop spawning!');
   }
 }
@@ -926,7 +1050,7 @@ function checkSegregationGate(){
   // WHITES ONLY gap is at col 17, row 9. COLORED gap at col 4, row 9.
   if(ptr===9&&(ptc===16||ptc===17)){
     // Player chose the "whites only" path — overwhelmed by enforcers
-    segAmbushed=true;
+    segAmbushed=true;sfx('ambush');
     notify('⚠ "WHITES ONLY" — you are surrounded! The system defends its line.');
     flashRed();
     // Spawn a swarm around the player
@@ -958,7 +1082,7 @@ function checkPortalStep(){
   });
 }
 function goZone(toZ,toTC,toTR){
-  transitioning=true;
+  transitioning=true;sfx('portal');
   const wf=document.getElementById('wflash');
   wf.style.transition='none';wf.style.opacity='1';
   setTimeout(()=>{
@@ -990,7 +1114,7 @@ function goZone(toZ,toTC,toTR){
 
 // ══════ QUIZ SYSTEM ══════
 function triggerQuiz(){
-  quizZone=zone;
+  quizZone=zone;updObjectives();
   quizQs=[...QUIZZES[zone]].sort(()=>Math.random()-0.5).slice(0,3);
   quizIdx=0;quizCorrect=0;quizAnswered=false;
   document.getElementById('qsub').textContent=`Zone ${zone+1}: ${ZONES[zone].name} — Answer 2 of 3 correctly to restore health and open the portal!`;
@@ -1020,7 +1144,9 @@ function answerQuiz(chosen,correct,btn){
   if(chosen===correct){
     btn.classList.add('correct');quizCorrect++;
     document.getElementById('qresult').textContent='✅ Correct!';
+    sfx('quiz_right');
   }else{
+    sfx('quiz_wrong');
     btn.classList.add('wrong');
     opts[correct].classList.add('correct');
     document.getElementById('qresult').textContent='❌ Incorrect — the correct answer is highlighted.';
@@ -1093,7 +1219,15 @@ function autoPickup(){
 // ══════ RENDER ══════
 function render(){
   if(!CTX)return;
-  const c=CTX,cx=camx,cy=camy;
+  const c=CTX;
+  // screen shake — random offset that decays
+  let shx=0,shy=0;
+  if(shakeAmt>0.4){
+    shx=(Math.random()*2-1)*shakeAmt;
+    shy=(Math.random()*2-1)*shakeAmt;
+    shakeAmt*=shakeDecay;
+  } else shakeAmt=0;
+  const cx=camx+shx,cy=camy+shy;
   c.clearRect(0,0,VW,VH);
   c.fillStyle=ZONES[zone].bg||'#000';c.fillRect(0,0,VW,VH);
   // tiles
@@ -1106,11 +1240,14 @@ function render(){
     if(it.zone!==zone||itemState[i])return;
     const sx=it.tc*TS+24-cx,sy=it.tr*TS+24-cy;
     const bob=Math.sin(tick*0.07+i)*5;
+    const opt=it.optional;
     c.globalAlpha=0.3+0.25*Math.sin(tick*0.08+i);
-    c.fillStyle='#D4AF37';c.beginPath();c.arc(sx,sy+bob,20,0,Math.PI*2);c.fill();
+    c.fillStyle=opt?'#9C6ADE':'#D4AF37';c.beginPath();c.arc(sx,sy+bob,20,0,Math.PI*2);c.fill();
     c.globalAlpha=1;
     c.font='20px serif';c.textAlign='center';c.fillText(it.emoji,sx,sy+bob+7);
-    c.fillStyle='rgba(240,221,176,0.85)';c.font='7px Georgia,serif';c.fillText(it.label,sx,sy+bob+23);
+    c.fillStyle=opt?'rgba(200,170,240,0.9)':'rgba(240,221,176,0.85)';
+    c.font='7px Georgia,serif';c.fillText(it.label,sx,sy+bob+23);
+    if(opt){c.fillStyle='rgba(180,140,255,0.9)';c.font='6px Georgia,serif';c.fillText('◆ BONUS LORE',sx,sy+bob-24);}
   });
   // enemies
   enemies.forEach(e=>drawEnemy(c,e,cx,cy));
@@ -1825,6 +1962,7 @@ function fireFAR(){
   }
   farCharge=0;updFARMeter();
   farBlast=40;
+  addShake(14);addHitPause(6);sfx('far');
   // Three expanding rings — Faith, Ancestor, Responsibility
   farRings=[{r:0,life:40,col:'#FFD700',lbl:'FAITH'},
             {r:0,life:40,col:'#B388FF',lbl:'ANCESTOR',delay:6},
@@ -1867,7 +2005,7 @@ function sword(){
   if(currentWeapon()==='pistol'){
     firePistol();
   } else {
-    swActive=true;swTimer=16;swCool=24;checkSwordHits();
+    swActive=true;swTimer=16;swCool=24;sfx('swing');checkSwordHits();
   }
 }
 function firePistol(){
@@ -1880,6 +2018,7 @@ function firePistol(){
   const sx=px+dx*12, sy=py+dy*12;
   bullets.push({x:sx,y:sy,vx:dx*10,vy:dy*10,life:70,dir:pfacing});
   spawnPfx(sx,sy,'✨',1,8);
+  addShake(2);sfx(zone>=2?'plasma':'shoot');
 }
 function updateBullets(){
   bullets=bullets.filter(b=>b.life>0);
@@ -1912,7 +2051,7 @@ function doTalk(){
   const ns=npcState[best.id];
   if(ns.didx>=best.lines.length){openDlg(best.name,'My spirit walks with you. Carry what you have learned forward.');return;}
   const line=best.lines[ns.didx++];
-  const wasMet=ns.met;ns.met=true;
+  const wasMet=ns.met;ns.met=true;updObjectives();
   openDlg(best.name,line);
   spawnPfx(best.tc*TS+24,best.tr*TS+24,'#D4AF37','✨',10);
   score+=50;updHUD();
@@ -1937,7 +2076,7 @@ function doTake(){
   else notify('Walk near a glowing artifact to collect it');
 }
 function collectItem(i){
-  itemState[i]=true;score+=75;updHUD();
+  itemState[i]=true;score+=75;updHUD();sfx('pickup');
   const it=ITEMS[i];
   spawnPfx(it.tc*TS+24,it.tr*TS+24,'#D4AF37','★',10);
   notify(`✨ ${it.emoji} ${it.label} — +75`);
@@ -1955,6 +2094,7 @@ function mapDlg(){
 
 // ══════ DIALOG ══════
 function openDlg(name,text){
+  sfx('talk');
   document.getElementById('dlgname').textContent=name;
   document.getElementById('dlgtxt').textContent=text;
   document.getElementById('dlg').style.display='block';dlgOpen=true;
@@ -1991,6 +2131,60 @@ function updHUD(){
   document.getElementById('ebox').textContent=`⚔ ${defeated}`;
   const swBtn=document.getElementById('swBtn');
   if(swBtn)swBtn.textContent=zone>=4?'⚡':zone>=2?'🔫':'🗡️';
+  updObjectives();
+}
+function updObjectives(){
+  const zNpcs=NPCS.filter(n=>n.zone===zone);
+  const met=zNpcs.filter(n=>npcState[n.id]&&npcState[n.id].met).length;
+  const zItems=ITEMS.map((it,i)=>({it,i})).filter(o=>o.it.zone===zone);
+  const reqItems=zItems.filter(o=>!o.it.optional);
+  const gotReq=reqItems.filter(o=>itemState[o.i]).length;
+  const quizDone=quizZone===zone;
+  const allMet=met===zNpcs.length&&zNpcs.length>0;
+
+  const ancRow=document.getElementById('obj-anc');
+  const artRow=document.getElementById('obj-art');
+  const quizRow=document.getElementById('obj-quiz');
+  const gateRow=document.getElementById('obj-gate');
+  if(!ancRow)return;
+
+  document.getElementById('objAnc').textContent=`${met}/${zNpcs.length}`;
+  ancRow.classList.toggle('done',allMet);
+
+  document.getElementById('objArt').textContent=`${gotReq}/${reqItems.length}`;
+  artRow.classList.toggle('done',gotReq===reqItems.length&&reqItems.length>0);
+
+  document.getElementById('objQuiz').textContent=quizDone?'✓':'▢';
+  quizRow.classList.toggle('done',quizDone);
+
+  // Optional lore counter
+  const optItems=zItems.filter(o=>o.it.optional);
+  const gotOpt=optItems.filter(o=>itemState[o.i]).length;
+  const loreRow=document.getElementById('obj-lore');
+  if(loreRow&&optItems.length>0){
+    loreRow.style.display='flex';
+    document.getElementById('objLore').textContent=`${gotOpt}/${optItems.length}`;
+    loreRow.classList.toggle('done',gotOpt===optItems.length);
+  } else if(loreRow){loreRow.style.display='none';}
+
+  // Gate status — the actual unlock condition is: all ancestors met + quiz passed
+  const bossZone=ZONES[zone].isBoss;
+  if(bossZone){
+    gateRow.style.display='none';
+  } else {
+    gateRow.style.display='flex';
+    const gateTxt=document.getElementById('objGateTxt');
+    if(allMet&&quizDone){
+      gateTxt.textContent='Portal OPEN — go south!';
+      gateRow.classList.add('open');
+    } else if(allMet&&!quizDone){
+      gateTxt.textContent='Portal: pass the quiz';
+      gateRow.classList.remove('open');
+    } else {
+      gateTxt.textContent=`Meet ${zNpcs.length-met} more ancestor${zNpcs.length-met>1?'s':''}`;
+      gateRow.classList.remove('open');
+    }
+  }
 }
 function notify(msg){
   const el=document.getElementById('notif');
@@ -2019,6 +2213,7 @@ function doGameOver(){
   document.getElementById('ov').style.display='flex';
 }
 function doWin(){
+  sfx('win');
   won=true;
   document.getElementById('ovtitle').textContent='🌟 FREEDOM!';
   document.getElementById('ovtitle').style.color='#D4AF37';
