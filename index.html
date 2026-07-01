@@ -125,6 +125,72 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
   padding:13px 36px;font-size:clamp(13px,3.5vw,16px);font-weight:900;border-radius:28px;
   cursor:pointer;margin-top:14px;font-family:Georgia,serif;min-height:52px;display:none;}
 
+
+/* ── ENCYCLOPEDIA · HALL OF ANCESTORS ── */
+#ency{position:fixed;inset:0;z-index:300;display:none;flex-direction:column;
+  background:radial-gradient(ellipse at 50% 0%,#221200,#080400 65%,#000);
+  overflow-y:auto;-webkit-overflow-scrolling:touch;padding:22px 14px 40px;}
+#ency.open{display:flex;}
+.ehead{text-align:center;margin-bottom:4px;}
+.ehead h2{color:#D4AF37;font-size:clamp(20px,6vw,32px);letter-spacing:3px;
+  text-shadow:0 0 30px rgba(255,215,0,.35);}
+.ehead .esub{color:#c8a96e;font-style:italic;font-size:clamp(11px,2.8vw,13px);margin-top:4px;}
+.ekente{width:min(260px,80vw);height:8px;border-radius:4px;margin:12px auto 6px;
+  background:repeating-linear-gradient(90deg,#D4AF37 0 14px,#8B0000 14px 28px,#1B5E20 28px 42px,#FF8F00 42px 56px);}
+/* filter / search bar */
+.ebar{position:sticky;top:0;z-index:5;background:rgba(10,5,0,0.96);
+  padding:10px 0 8px;margin:0 auto 4px;max-width:560px;width:100%;}
+.esearch{width:100%;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.5);
+  border-radius:22px;color:#f0ddb0;font-family:Georgia,serif;font-size:clamp(13px,3.4vw,15px);
+  padding:11px 18px;outline:none;}
+.esearch::placeholder{color:#8a7040;font-style:italic;}
+.esearch:focus{border-color:#FFD54F;box-shadow:0 0 12px rgba(255,213,79,.25);}
+.echips{display:flex;gap:6px;overflow-x:auto;padding:9px 2px 4px;-webkit-overflow-scrolling:touch;
+  scrollbar-width:none;}
+.echips::-webkit-scrollbar{display:none;}
+.echip{flex:0 0 auto;background:rgba(212,175,55,.08);border:1px solid rgba(212,175,55,.4);
+  color:#c8a96e;border-radius:16px;padding:6px 13px;font-family:Georgia,serif;
+  font-size:clamp(9.5px,2.5vw,11px);letter-spacing:1px;cursor:pointer;white-space:nowrap;min-height:34px;}
+.echip.sel{background:linear-gradient(180deg,#D4AF37,#8B6914);color:#0a0400;border-color:#D4AF37;font-weight:900;}
+.ecount{color:#8a7040;font-size:clamp(10px,2.6vw,11px);font-style:italic;text-align:right;
+  max-width:560px;width:100%;margin:0 auto 6px;}
+.enone{color:#9a7840;font-style:italic;text-align:center;padding:30px 10px;max-width:560px;margin:0 auto;}
+.emed{position:relative;}
+.emed::after{content:'';position:absolute;inset:-5px;border-radius:50%;
+  border:1px solid rgba(212,175,55,.45);}
+.ecard{transition:border-color .15s;}
+.ecard:hover{border-color:#FFD54F;}
+.eera{color:#FFD54F;font-size:clamp(12px,3.2vw,14px);letter-spacing:3px;font-weight:900;
+  margin:22px auto 10px;max-width:560px;width:100%;text-align:left;
+  border-bottom:1px solid rgba(212,175,55,.35);padding-bottom:5px;}
+.ecard{background:rgba(212,175,55,.07);border:1px solid rgba(212,175,55,.4);border-radius:12px;
+  padding:13px 14px;margin:0 auto 10px;max-width:560px;width:100%;text-align:left;
+  display:flex;gap:12px;align-items:flex-start;}
+.emed{flex:0 0 44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:900;font-size:16px;color:#0a0400;border:2px solid rgba(255,255,255,.35);
+  box-shadow:0 0 14px rgba(0,0,0,.6) inset;}
+.ebody{flex:1;min-width:0;}
+.ename{color:#f0ddb0;font-weight:900;font-size:clamp(13px,3.4vw,15px);letter-spacing:1px;}
+.eyears{color:#9a7840;font-size:clamp(10px,2.6vw,11px);font-style:italic;margin:1px 0 6px;}
+.ebio{color:#d8c290;font-size:clamp(11.5px,2.9vw,13px);line-height:1.65;}
+.eclose{position:sticky;bottom:0;margin:24px auto 0;display:block;
+  background:linear-gradient(180deg,#D4AF37,#8B6914);color:#0a0400;border:none;
+  padding:13px 40px;font-size:clamp(13px,3.6vw,16px);font-weight:900;letter-spacing:2px;
+  border-radius:34px;cursor:pointer;font-family:Georgia,serif;min-height:52px;}
+.dlabel{color:#9a7840;letter-spacing:3px;font-size:clamp(9px,2.4vw,11px);margin:16px 0 6px;}
+.drow{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:14px;}
+.dchip{background:rgba(212,175,55,.08);border:2px solid rgba(212,175,55,.45);color:#c8a96e;
+  border-radius:24px;padding:9px 18px;font-family:Georgia,serif;font-weight:900;
+  letter-spacing:2px;font-size:clamp(10px,2.8vw,12px);cursor:pointer;min-height:42px;}
+.dchip.sel{background:linear-gradient(180deg,#D4AF37,#8B6914);color:#0a0400;border-color:#D4AF37;}
+.dhint{color:#7a6238;font-style:italic;font-size:clamp(9.5px,2.5vw,11px);margin:-6px 0 12px;
+  max-width:320px;line-height:1.6;min-height:2.6em;}
+.hhalf{background:linear-gradient(90deg,#FF1744 50%,#555 50%);
+  -webkit-background-clip:text;background-clip:text;color:transparent!important;}
+.sbtn2{background:transparent;color:#D4AF37;border:2px solid #D4AF37;
+  padding:11px 34px;font-size:clamp(12px,3.4vw,15px);font-weight:900;letter-spacing:2px;
+  border-radius:36px;cursor:pointer;font-family:Georgia,serif;min-height:48px;margin-top:12px;}
+
 /* ── GAME OVER / WIN OVERLAY ── */
 #ov{position:fixed;inset:0;z-index:100;display:none;flex-direction:column;
   align-items:center;justify-content:center;background:rgba(0,0,0,0.94);text-align:center;padding:24px;}
@@ -295,8 +361,34 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
   <div class="t1">FREEDOM QUEST</div>
   <div class="t2">A BLACK HISTORY ODYSSEY</div>
   <div class="kente"></div>
+  <div class="dlabel">CHOOSE YOUR PATH</div>
+  <div class="drow">
+    <button class="dchip sel" id="dc0" onclick="setDiff(0)">FREEDOM</button>
+    <button class="dchip" id="dc1" onclick="setDiff(1)">STRUGGLE</button>
+    <button class="dchip" id="dc2" onclick="setDiff(2)">LEGACY</button>
+  </div>
+  <div class="dhint" id="dhint">The journey as intended — for first travelers.</div>
   <button class="sbtn" onclick="startGame()">BEGIN THE JOURNEY</button>
+  <button class="sbtn2" onclick="openEncy()">📖 HALL OF ANCESTORS</button>
   <div class="lore">Walk with Ancestors. Defeat slave catchers.<br>Answer history. Reach freedom.</div>
+</div>
+
+
+<!-- ENCYCLOPEDIA · HALL OF ANCESTORS -->
+<div id="ency">
+  <div class="ehead">
+    <h2>HALL OF ANCESTORS</h2>
+    <div class="esub">An encyclopedia of Black history — founders, inventors, organizers, and voices of the present</div>
+    <div class="ekente"></div>
+  </div>
+  <div class="ebar">
+    <input class="esearch" id="esearch" type="search" placeholder="Search a name, an invention, a movement…"
+      oninput="renderEncy()" aria-label="Search the Hall of Ancestors">
+    <div class="echips" id="echips"></div>
+  </div>
+  <div class="ecount" id="ecount"></div>
+  <div id="encyList"></div>
+  <button class="eclose" onclick="closeEncy()">↩ RETURN</button>
 </div>
 
 <!-- GAME SCREEN -->
@@ -531,6 +623,58 @@ const SOLID=new Set([WA,TR,WL,HO,ST,SW,SC]);
 const TBASE={[GR]:'#2f5e1e',[DT]:'#7a4f2a',[PT]:'#b89a60',[WA]:'#1a5fa8',
   [TR]:'#16300d',[WL]:'#4a3020',[HO]:'#8B2500',[FL]:'#2d5a1b',[SA]:'#c8a96e',
   [PO]:'#0d0d2e',[CO]:'#4a6a1a',[FD]:'#5a7a2a',[ST]:'#555',[RD]:'#8B2500'};
+// ══════ ZONE GROUND PALETTES — tactile per-era terrain ══════
+// g1/g2 grass gradient · tf tuft · dp dapple · p1/p2 path · pd path detail · sl soil
+const PAL=[
+ {g1:'#6f7c26',g2:'#4d5a17',tf:'#93a23e',dp:'rgba(215,200,90,0.14)',p1:'#cfae6e',p2:'#b09055',pd:'rgba(120,85,40,0.4)',sl:'#7d5230'}, // 0 sun-scorched plantation
+ {g1:'#1d3d2a',g2:'#0f241a',tf:'#2f6144',dp:'rgba(120,190,255,0.08)',p1:'#8d8468',p2:'#6f684f',pd:'rgba(40,50,70,0.45)',sl:'#4a3a26'}, // 1 moonlit freedom road
+ {g1:'#3f7a23',g2:'#2a5215',tf:'#5da339',dp:'rgba(255,210,120,0.12)',p1:'#c2a468',p2:'#a2854e',pd:'rgba(120,90,50,0.4)',sl:'#83552f'}, // 2 free north spring
+ {g1:'#33632e',g2:'#204020',tf:'#4c8a48',dp:'rgba(140,200,220,0.10)',p1:'#a89a80',p2:'#8a7d64',pd:'rgba(70,70,80,0.4)',sl:'#6d4c30'}, // 3 jim crow, cooler
+ {g1:'#274a3c',g2:'#152c24',tf:'#3f7361',dp:'rgba(190,130,255,0.14)',p1:'#8f8578',p2:'#6f6759',pd:'rgba(90,60,140,0.35)',sl:'#54402e'}, // 4 harlem night park
+ {g1:'#2a3c46',g2:'#17232c',tf:'#3f6273',dp:'rgba(200,150,255,0.16)',p1:'#7d7a8a',p2:'#5e5b6c',pd:'rgba(140,90,220,0.35)',sl:'#443a4e'}, // 5 liberation nexus
+];
+const SOLIDSET=new Set([WL,HO,ST,SC,SW,TR]);
+// soft contact shadow cast onto a walkable tile by a solid tile above / left
+function castAO(c,sx,sy,col,row){
+  const m=MAPS[zone];
+  if(row>0&&SOLIDSET.has(m[row-1][col])){
+    const g=c.createLinearGradient(sx,sy,sx,sy+12);
+    g.addColorStop(0,'rgba(0,0,0,0.32)');g.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g;c.fillRect(sx,sy,TS,12);
+  }
+  if(col>0&&SOLIDSET.has(m[row][col-1])&&m[row][col-1]!==TR){
+    const g=c.createLinearGradient(sx,sy,sx+9,sy);
+    g.addColorStop(0,'rgba(0,0,0,0.22)');g.addColorStop(1,'rgba(0,0,0,0)');
+    c.fillStyle=g;c.fillRect(sx,sy,9,TS);
+  }
+}
+// grass blades fringing over the top / left edge of a path-like tile
+function grassFringe(c,sx,sy,col,row,P){
+  const m=MAPS[zone];
+  if(row>0&&(m[row-1][col]===GR||m[row-1][col]===FL)){
+    c.strokeStyle=P.tf;c.lineWidth=2;c.beginPath();
+    for(let k=0;k<5;k++){
+      const fx=sx+4+k*8+((col*13+k*7)%5), sw=Math.sin(tick*0.05+col+k)*1.2;
+      c.moveTo(fx,sy);c.lineTo(fx+sw,sy+4+((k*5+row)%4));
+    }
+    c.stroke();
+  }
+  if(col>0&&(m[row][col-1]===GR||m[row][col-1]===FL)){
+    c.strokeStyle=P.tf;c.lineWidth=2;c.beginPath();
+    for(let k=0;k<4;k++){
+      const fy=sy+5+k*9+((row*11+k*5)%5);
+      c.moveTo(sx,fy);c.lineTo(sx+4+((k+col)%3),fy+1);
+    }
+    c.stroke();
+  }
+}
+// deterministic per-tile brightness jitter — kills the uniform-grid look
+function tileJitter(c,sx,sy,seed){
+  const v=(seed%9);
+  if(v<3){c.fillStyle='rgba(0,0,0,'+(0.03+v*0.015)+')';c.fillRect(sx,sy,TS,TS);}
+  else if(v>5){c.fillStyle='rgba(255,255,240,'+((v-5)*0.014)+')';c.fillRect(sx,sy,TS,TS);}
+}
+
 
 // ══════ MAPS (5 zones, 24×18) ══════
 // Zone 0: Plantation (easy)
@@ -660,6 +804,24 @@ const MHARLEM=[
 ];
 const MAPS=[M0,M1,M2,M3,MHARLEM,M4];
 
+// ══════ DIFFICULTY ══════
+// Tiers only climb — FREEDOM is the baseline game; harder paths sharpen the foe
+// and, in exchange, Ancestral Knowledge artifacts restore half a heart.
+let diff=0;
+const DIFFS=[
+  {name:'FREEDOM',  hp:0,spd:1,   dmg:0,spawn:1,   maxE:0,boss:0, itemHeal:false,
+   hint:'The journey as intended — for first travelers.'},
+  {name:'STRUGGLE', hp:1,spd:1.15,dmg:0,spawn:0.8, maxE:1,boss:12,itemHeal:true,
+   hint:'Catchers are tougher, faster, and more numerous. Artifacts restore half a heart.'},
+  {name:'LEGACY',   hp:2,spd:1.3, dmg:1,spawn:0.65,maxE:2,boss:24,itemHeal:true,
+   hint:'The hardest road. Relentless foes that hit harder. Artifacts restore half a heart.'},
+];
+function setDiff(i){
+  diff=i;
+  for(let k=0;k<3;k++)document.getElementById('dc'+k).classList.toggle('sel',k===i);
+  document.getElementById('dhint').textContent=DIFFS[i].hint;
+}
+
 // ══════ ZONE CONFIG ══════
 // difficulty: hp, speed multiplier, damage
 const ZONES=[
@@ -682,38 +844,62 @@ const PORTALS=[
   // Zone 5 boss — no portal, win on boss defeat
 ];
 
-// ══════ QUIZ DATA per zone ══════
+// ══════ QUIZ DATA per zone (8 per zone; 4 drawn at random each run) ══════
 const QUIZZES=[
   // Zone 0 — Plantation
   [{q:"What did the Underground Railroad actually refer to?",opts:["A literal railroad underground","A secret network of safe routes and helpers guiding enslaved people to freedom","A legal escape route established by Congress","A network of tunnels built by abolitionists"],ans:1},
    {q:"Which 1850 law required Northerners to help return escaped enslaved people?",opts:["The Missouri Compromise","The Emancipation Proclamation","The Fugitive Slave Act","The Kansas-Nebraska Act"],ans:2},
    {q:"What did enslaved people primarily use to navigate north at night?",opts:["Compass needles","The North Star (Polaris)","River currents","Road signs"],ans:1},
-   {q:"Roughly how long did slavery last in the American colonies and United States?",opts:["About 50 years","About 100 years","About 250 years","About 400 years"],ans:2}],
+   {q:"Roughly how long did slavery last in the American colonies and United States?",opts:["About 50 years","About 100 years","About 250 years","About 400 years"],ans:2},
+   {q:"What was the Middle Passage?",opts:["The overland route from Virginia to Ohio","The forced Atlantic crossing that carried millions of enslaved Africans to the Americas","A canal connecting Southern plantations","The middle section of the Underground Railroad"],ans:1},
+   {q:"Why did many Southern states make it illegal to teach enslaved people to read?",opts:["Books were too expensive to distribute","Literacy enabled forged passes, communication, and organized resistance","Reading was considered a religious activity","Enslavers believed education caused disease"],ans:1},
+   {q:"Denmark Vesey planned a major uprising in 1822 in which city?",opts:["New Orleans, Louisiana","Richmond, Virginia","Charleston, South Carolina","Savannah, Georgia"],ans:2},
+   {q:"What were 'slave codes'?",opts:["Secret languages used by enslaved people","Laws that strictly controlled the movement, assembly, and rights of enslaved people","Plantation record-keeping systems","Codes of conduct for overseers"],ans:1}],
   // Zone 1 — Underground Railroad
   [{q:"How many people did Harriet Tubman free via the Underground Railroad?",opts:["About 30","About 300","Over 700","Hundreds — estimates range from 70 to 300+"],ans:3},
    {q:"Frederick Douglass escaped slavery in 1838 disguised as what?",opts:["A Union soldier","A free Black sailor","A white plantation owner","A traveling preacher"],ans:1},
    {q:"What was a 'conductor' on the Underground Railroad?",opts:["A train engineer","Someone who guided freedom seekers between safe houses","A person who printed abolitionist newspapers","A lawyer who defended escaped enslaved people"],ans:1},
-   {q:"Harriet Tubman was nicknamed what for her rescue missions?",opts:["The General","Moses","The Conductor","Lady Liberty"],ans:1}],
+   {q:"Harriet Tubman was nicknamed what for her rescue missions?",opts:["The General","Moses","The Conductor","Lady Liberty"],ans:1},
+   {q:"The song 'Follow the Drinking Gourd' secretly encoded what?",opts:["A recipe shared among enslaved cooks","Escape directions using the Big Dipper pointing to the North Star","The names of trusted conductors","A warning that slave catchers were near"],ans:1},
+   {q:"In 1862, Robert Smalls freed himself and his family by doing what?",opts:["Purchasing his freedom with saved wages","Commandeering the Confederate ship Planter and sailing it to the Union fleet","Escaping through the Great Dismal Swamp","Enlisting in the Union Army under a false name"],ans:1},
+   {q:"Many freedom seekers pressed on to Canada because of what?",opts:["Free land grants were offered there","Slavery was illegal there and the Fugitive Slave Act could not reach them","The climate was better for farming","Canada paid conductors for each arrival"],ans:1},
+   {q:"William Still is called the 'Father of the Underground Railroad' for doing what?",opts:["Building the first safe house","Keeping detailed records of hundreds of freedom seekers he helped, preserving their stories","Inventing the lantern signal system","Funding Harriet Tubman's missions"],ans:1}],
   // Zone 2 — Free North
   [{q:"When did Lincoln's Emancipation Proclamation take effect?",opts:["July 4, 1863","January 1, 1863","April 9, 1865","December 6, 1865"],ans:1},
    {q:"The 13th Amendment (1865) did which of the following?",opts:["Gave Black men the right to vote","Abolished slavery throughout the United States","Guaranteed equal protection under law","Established the Freedmen's Bureau"],ans:1},
    {q:"What was the Freedmen's Bureau?",opts:["A federal agency helping formerly enslaved people transition to freedom","A newspaper for free Black citizens","A political party for Reconstruction","A court that tried slave catchers"],ans:0},
-   {q:"The 15th Amendment (1870) granted what?",opts:["Freedom from slavery","Citizenship to all born in the US","The right to vote regardless of race","Equal protection under law"],ans:2}],
+   {q:"The 15th Amendment (1870) granted what?",opts:["Freedom from slavery","Citizenship to all born in the US","The right to vote regardless of race","Equal protection under law"],ans:2},
+   {q:"Who became the first Black U.S. Senator in 1870?",opts:["Frederick Douglass","Hiram Revels","Robert Smalls","Blanche K. Bruce"],ans:1},
+   {q:"The 14th Amendment (1868) guaranteed what?",opts:["The right to bear arms","Citizenship and equal protection under the law for all persons born in the US","The abolition of the poll tax","Free public education"],ans:1},
+   {q:"Sharecropping often trapped Black farming families in what condition?",opts:["Forced military service","Cycles of debt that kept them tied to the land they worked","Mandatory relocation to cities","Government-run labor camps"],ans:1},
+   {q:"Between 1865 and 1870, formerly enslaved people and the Freedmen's Bureau built what?",opts:["The first Black-owned railroads","Thousands of schools, laying foundations for Black colleges","A chain of Southern banks","New state capitols"],ans:1}],
   // Zone 3 — Jim Crow
   [{q:"What were 'Jim Crow laws'?",opts:["Federal laws protecting Black voting rights","State and local laws enforcing racial segregation in the South","Laws banning Black immigration to the North","Anti-lynching legislation passed by Congress"],ans:1},
    {q:"Ida B. Wells was famous for her campaign against what?",opts:["School segregation","Lynching and racial terror violence","Voter suppression laws","Economic discrimination in the North"],ans:1},
    {q:"The Great Migration (1910–1970) involved what?",opts:["Black Americans moving from the North to the South","White Southerners moving west","Over 6 million Black Americans moving from the South to Northern and Western cities","The migration of freed enslaved people to Africa"],ans:2},
-   {q:"The 1896 Supreme Court case Plessy v. Ferguson established what doctrine?",opts:["\"One person, one vote\"","\"Separate but equal\"","\"Due process\"","\"Equal protection\""],ans:1}],
+   {q:"The 1896 Supreme Court case Plessy v. Ferguson established what doctrine?",opts:["\"One person, one vote\"","\"Separate but equal\"","\"Due process\"","\"Equal protection\""],ans:1},
+   {q:"Booker T. Washington founded which institution in 1881?",opts:["Howard University","The Tuskegee Institute","Hampton Institute","Fisk University"],ans:1},
+   {q:"W.E.B. Du Bois co-founded which organization in 1909?",opts:["The Urban League","The UNIA","The NAACP","The Niagara Bank"],ans:2},
+   {q:"Literacy tests and poll taxes were designed to do what?",opts:["Raise money for public schools","Block Black citizens from voting while exempting most white voters","Ensure educated juries","Fund Reconstruction programs"],ans:1},
+   {q:"Parrish Street in Durham, North Carolina earned what nickname?",opts:["The Freedom Mile","Black Wall Street","Little Harlem","The Gold Coast"],ans:1}],
   // Zone 4 — Harlem Renaissance
   [{q:"The Harlem Renaissance was primarily a flourishing of what?",opts:["Political parties","Black art, literature, music, and intellectual life","Labor unions","Military regiments"],ans:1},
    {q:"Which poet wrote 'The Negro Speaks of Rivers' and 'Harlem (A Dream Deferred)'?",opts:["Countee Cullen","Claude McKay","Langston Hughes","Jean Toomer"],ans:2},
    {q:"Marcus Garvey is best known for founding what?",opts:["The NAACP","The Universal Negro Improvement Association (UNIA)","The Urban League","The Nation of Islam"],ans:1},
-   {q:"Which author wrote 'Their Eyes Were Watching God' and collected Black folklore?",opts:["Nella Larsen","Zora Neale Hurston","Dorothy West","Jessie Fauset"],ans:1}],
+   {q:"Which author wrote 'Their Eyes Were Watching God' and collected Black folklore?",opts:["Nella Larsen","Zora Neale Hurston","Dorothy West","Jessie Fauset"],ans:1},
+   {q:"The famous Cotton Club showcased Black performers but was notorious for what?",opts:["Refusing to pay musicians","Barring Black patrons from its audience","Banning jazz music","Closing during Prohibition"],ans:1},
+   {q:"Duke Ellington and Bessie Smith were pioneering figures in what?",opts:["Broadway theater","Jazz and blues","Classical composition","Gospel radio"],ans:1},
+   {q:"Alain Locke's landmark 1925 anthology was titled what?",opts:["The Souls of Black Folk","The New Negro","The Crisis Reader","Harlem Shadows"],ans:1},
+   {q:"How did the Great Migration help fuel the Harlem Renaissance?",opts:["It brought federal arts funding to New York","It concentrated Black talent, audiences, and institutions in northern cities like Harlem","It ended segregation in northern theaters","It lowered rents in Manhattan"],ans:1}],
   // Zone 5 — Boss / Civil Rights
   [{q:"The 1963 March on Washington drew how many participants?",opts:["About 50,000","About 100,000","About 250,000","Over 1 million"],ans:2},
    {q:"Rosa Parks refused to give up her bus seat in which city?",opts:["Birmingham, Alabama","Atlanta, Georgia","Montgomery, Alabama","Selma, Alabama"],ans:2},
    {q:"The Civil Rights Act of 1964 did which of the following?",opts:["Only banned school segregation","Outlawed discrimination based on race, color, religion, sex, or national origin","Gave Black Americans the right to vote","Abolished the poll tax"],ans:1},
-   {q:"The Voting Rights Act of 1965 primarily did what?",opts:["Ended school segregation","Banned discriminatory voting practices like literacy tests","Created affirmative action","Desegregated the military"],ans:1}],
+   {q:"The Voting Rights Act of 1965 primarily did what?",opts:["Ended school segregation","Banned discriminatory voting practices like literacy tests","Created affirmative action","Desegregated the military"],ans:1},
+   {q:"Brown v. Board of Education (1954) ruled what?",opts:["That poll taxes were legal","That segregated public schools were unconstitutional","That buses must be integrated","That lynching was a federal crime"],ans:1},
+   {q:"The Montgomery Bus Boycott lasted how long?",opts:["30 days","6 months","381 days","3 years"],ans:2},
+   {q:"The 1960 sit-in movement ignited at a Woolworth's lunch counter in which city?",opts:["Nashville, Tennessee","Greensboro, North Carolina","Atlanta, Georgia","Jackson, Mississippi"],ans:1},
+   {q:"Who was the chief organizer of the 1963 March on Washington?",opts:["Malcolm X","Bayard Rustin","John Lewis","Ralph Abernathy"],ans:1}],
 ];
 
 // ══════ NPCs ══════
@@ -814,9 +1000,12 @@ const ESPAWNS=[
   [],// boss zone — no normal spawns
 ];
 
+// ══════ AMBIENCE ══════
+let ambP=[],ambZone=-1;
+
 // ══════ BOSS ══════
 let boss=null,bossActive=false;
-const BOSS_MAXHP=40;
+let BOSS_MAXHP=40;
 function makeBoss(){
   return {px:11*TS+24,py:6*TS+24,hp:BOSS_MAXHP,phase:0,
           ht:0,kx:0,ky:0,dead:false,spawnTimer:0,
@@ -917,11 +1106,13 @@ function spawnInitEnemies(){
   ESPAWNS[zone].forEach(sp=>enemies.push(mkEnemy(sp.px,sp.py,ZONES[zone])));
 }
 function mkEnemy(epx,epy,zi){
-  const z=zi||ZONES[zone];
-  return{id:eidx++,px:epx,py:epy,hp:z.eHp,maxHp:z.eHp,spd:z.eSpd,dmg:z.eDmg,
+  const z=zi||ZONES[zone], D=DIFFS[diff];
+  const ehp=z.eHp+D.hp, espd=z.eSpd*D.spd, edmg=z.eDmg+D.dmg;
+  return{id:eidx++,px:epx,py:epy,hp:ehp,maxHp:ehp,spd:espd,dmg:edmg,
          ht:0,dead:false,dt:0,kx:0,ky:0,pa:Math.random()*Math.PI*2,minion:false};
 }
 function startBoss(){
+  BOSS_MAXHP=40+DIFFS[diff].boss;
   boss=makeBoss();bossActive=true;
   document.getElementById('bossbar').style.display='block';
   document.getElementById('bossAssist').classList.add('on');
@@ -1129,10 +1320,10 @@ function moveEnemies(){
 function autoSpawn(){
   if(allMetInZone())return;
   spawnTimer++;
-  const zi=ZONES[zone];
-  if(spawnTimer<zi.spawnRate)return;
+  const zi=ZONES[zone], D=DIFFS[diff];
+  if(spawnTimer<zi.spawnRate*D.spawn)return;
   spawnTimer=0;
-  if(enemies.filter(e=>!e.dead).length>=zi.maxE)return;
+  if(enemies.filter(e=>!e.dead).length>=zi.maxE+D.maxE)return;
   const sps=ESPAWNS[zone];
   const far=sps.filter(s=>Math.hypot(px-s.px,py-s.py)>TS*6);
   const sp=(far.length?far:sps)[Math.floor(Math.random()*(far.length||sps.length))];
@@ -1295,6 +1486,139 @@ function goZone(toZ,toTC,toTR){
     }
   },380);
 }
+
+// ══════ ENCYCLOPEDIA · HALL OF ANCESTORS ══════
+const BIOS=[
+ {era:'RESISTANCE UNDER SLAVERY',people:[
+  {n:'Harriet Tubman',y:'c. 1822–1913',col:'#EF9A9A',bio:'Born enslaved in Maryland, Tubman escaped in 1849 and returned roughly 13 times to guide some 70 people to freedom, with instructions that helped dozens more. During the Civil War she served the Union as a scout and spy, and in 1863 helped lead the Combahee River Raid that freed over 700 people. She later fought for women\'s suffrage and founded a home for the elderly.'},
+  {n:'Nat Turner',y:'1800–1831',col:'#EF9A9A',bio:'An enslaved preacher in Southampton County, Virginia, Turner led the deadliest enslaved uprising in U.S. history in August 1831. The revolt shook the slaveholding South to its core, prompting harsher laws against Black literacy and assembly — proof of how deeply enslavers feared organized resistance. He was captured and executed, but the questions his revolt raised never died.'},
+  {n:'Denmark Vesey',y:'c. 1767–1822',col:'#FFCC80',bio:'A formerly enslaved carpenter who purchased his freedom after winning a lottery, Vesey planned one of the largest attempted uprisings in American history in Charleston, South Carolina in 1822. A co-founder of the city\'s AME church, he organized thousands before the plan was betrayed. He was executed, and the church was burned — then rebuilt as Mother Emanuel.'},
+  {n:'Nanny of the Maroons',y:'c. 1686–c. 1755',col:'#A5D6A7',bio:'A leader of the Windward Maroons of Jamaica — Africans who escaped slavery and built free towns in the Blue Mountains. Under Queen Nanny\'s military and spiritual leadership, the Maroons repelled British forces for years using guerrilla tactics and the abeng horn signal system. She remains a National Hero of Jamaica and a symbol of freedom taken, not given.'}]},
+ {era:'ABOLITION & THE UNDERGROUND RAILROAD',people:[
+  {n:'Frederick Douglass',y:'c. 1818–1895',col:'#A5D6A7',bio:'Douglass taught himself to read while enslaved in Baltimore, escaped in 1838 disguised as a free Black sailor, and became the most influential abolitionist voice in America. His autobiographies, his newspaper The North Star, and his oratory made him a living refutation of slavery\'s lies. He advised Lincoln, championed Black soldiers, and fought for women\'s rights.'},
+  {n:'Sojourner Truth',y:'c. 1797–1883',col:'#CE93D8',bio:'Born Isabella Baumfree in New York, she walked to freedom in 1826 carrying her infant daughter, then won a court case to recover her son — one of the first Black women to win against a white man in U.S. court. Renamed Sojourner Truth, she became a legendary preacher and speaker for abolition and women\'s rights, remembered for her "Ain\'t I a Woman?" address.'},
+  {n:'Robert Smalls',y:'1839–1915',col:'#82B1FF',bio:'In May 1862, Smalls — an enslaved ship\'s pilot — commandeered the Confederate steamer Planter in Charleston harbor, sailed it past five forts, and delivered it to the Union Navy, freeing himself, his crew, and their families. He became a Union pilot, bought the house where he had been enslaved, and served five terms in Congress during Reconstruction.'}]},
+ {era:'RECONSTRUCTION & UPLIFT',people:[
+  {n:'Ida B. Wells',y:'1862–1931',col:'#F48FB1',bio:'Born enslaved in Mississippi, Wells became a fearless investigative journalist who documented over 700 lynchings and exposed the economic motives behind racial terror. A mob destroyed her Memphis newspaper office for it; she kept publishing. A co-founder of the NAACP and a suffragist, she pioneered data-driven journalism as a weapon against injustice.'},
+  {n:'Booker T. Washington',y:'1856–1915',col:'#FFCC80',bio:'Born enslaved in Virginia, Washington founded the Tuskegee Institute in 1881 and built it into a national center of Black education and skilled trades. He preached economic self-reliance and institution-building, becoming the most powerful Black leader of his era. His 1910 visit to Durham\'s Black Wall Street hailed it as proof of his program.'},
+  {n:'Mary McLeod Bethune',y:'1875–1955',col:'#F48FB1',bio:'The fifteenth of seventeen children born to formerly enslaved parents, Bethune started a school for Black girls in Daytona with $1.50 and five students — it grew into Bethune-Cookman College. She founded the National Council of Negro Women, advised President Franklin Roosevelt, and became the highest-ranking Black woman in the New Deal government.'}]},
+ {era:'THE JIM CROW STRUGGLE',people:[
+  {n:'W.E.B. Du Bois',y:'1868–1963',col:'#90CAF9',bio:'The first Black American to earn a Harvard Ph.D., Du Bois named "the color line" as the problem of the twentieth century. He co-founded the NAACP in 1909 and edited its magazine The Crisis for a quarter century. His book The Souls of Black Folk gave the world the idea of double consciousness, and his scholarship founded Black sociology and history as disciplines.'},
+  {n:'Thurgood Marshall',y:'1908–1993',col:'#90CAF9',bio:'As chief counsel of the NAACP Legal Defense Fund, Marshall argued 32 cases before the Supreme Court and won 29 — including Brown v. Board of Education in 1954, which struck down school segregation. In 1967 he became the first Black Supreme Court Justice, serving 24 years as the Court\'s conscience on civil rights and the rights of the accused.'}]},
+ {era:'THE HARLEM RENAISSANCE',people:[
+  {n:'Langston Hughes',y:'1901–1967',col:'#FFD54F',bio:'The poet laureate of Black America, Hughes wrote "The Negro Speaks of Rivers" at nineteen and spent five decades chronicling the blues, joys, and deferred dreams of ordinary Black life. A central figure of the Harlem Renaissance, he insisted Black artists should write about Black people without shame or apology — and made the American language sing doing it.'},
+  {n:'Zora Neale Hurston',y:'1891–1960',col:'#F48FB1',bio:'Novelist, folklorist, and anthropologist, Hurston traveled the South collecting Black folktales, songs, and speech before they could be lost. Her masterpiece Their Eyes Were Watching God is now an American classic. Trained at Barnard under Franz Boas, she treated Black Southern culture as a civilization worth studying — decades ahead of the academy.'},
+  {n:'Marcus Garvey',y:'1887–1940',col:'#69F0AE',bio:'The Jamaican-born founder of the Universal Negro Improvement Association built the largest mass movement in Black history, with millions of followers across the globe. Garvey preached racial pride, economic independence, and Pan-African unity, founding the Black Star Line shipping company and giving the diaspora a flag and a vision of self-determination.'}]},
+ {era:'THE CIVIL RIGHTS MOVEMENT',people:[
+  {n:'Rosa Parks',y:'1913–2005',col:'#CE93D8',bio:'A seasoned NAACP investigator long before December 1, 1955, Parks refused to surrender her bus seat in Montgomery, Alabama — not from tiredness, she said, but from being tired of giving in. Her arrest launched the 381-day Montgomery Bus Boycott that ended bus segregation and lifted a young Dr. King to national leadership. She spent her life in the struggle.'},
+  {n:'Dr. Martin Luther King Jr.',y:'1929–1968',col:'#FFD700',bio:'The preacher who fused the Black church, Gandhian nonviolence, and the American creed into a moral force that broke legal segregation. King led the Montgomery boycott, the Birmingham campaign, and the 1963 March on Washington, where he delivered "I Have a Dream." Awarded the Nobel Peace Prize at 35, he was assassinated in Memphis while supporting striking sanitation workers.'}]},
+ {era:'EARLY VOICES · BEFORE THE CIVIL WAR',people:[
+  {n:'Phillis Wheatley',y:'c. 1753–1784',col:'#CE93D8',bio:'Kidnapped from West Africa as a child and enslaved in Boston, Wheatley published a book of poetry in 1773 — the first by a Black American — after a panel of skeptical white men examined her to verify she had written it. Her verse won praise from George Washington and made her transatlantic proof of Black genius in an age that denied it existed.'},
+  {n:'Benjamin Banneker',y:'1731–1806',col:'#82B1FF',bio:'A free Black farmer, self-taught mathematician, and astronomer from Maryland, Banneker published celebrated almanacs, helped survey the boundaries of Washington, D.C., and famously wrote Thomas Jefferson challenging him to square slavery with the Declaration\'s claim that all men are created equal — enclosing his almanac as evidence.'},
+  {n:'Richard Allen',y:'1760–1831',col:'#FFCC80',bio:'Born enslaved in Philadelphia, Allen bought his freedom and, after being pulled from his knees while praying in a segregated church, walked out and built his own. He founded the African Methodist Episcopal Church in 1816 — the first fully independent Black denomination — creating the institutional backbone of free Black life in America.'},
+  {n:'David Walker',y:'c. 1796–1830',col:'#EF9A9A',bio:'A free Black North Carolinian who settled in Boston, Walker published his Appeal in 1829 — a thunderous pamphlet calling on enslaved people to resist and condemning American hypocrisy. Smuggled south sewn into sailors\' coats, it terrified enslavers so badly that several states banned Black literacy and put a price on his head.'},
+  {n:'Maria W. Stewart',y:'1803–1879',col:'#F48FB1',bio:'A free Black domestic worker in Boston, Stewart became the first American-born woman of any race known to lecture publicly to mixed audiences of men and women. In the early 1830s she called on Black Americans to build schools and businesses and on Black women to claim public voice — decades before either was thinkable to most.'},
+  {n:'Martin Delany',y:'1812–1885',col:'#A5D6A7',bio:'Physician, journalist, and the father of Black nationalism, Delany co-edited The North Star with Douglass, was among the first Black men admitted to Harvard Medical School — and was expelled when white students protested. He explored West Africa for settlement, then became the first Black field-grade officer in the U.S. Army during the Civil War.'}]},
+ {era:'INVENTORS & SCIENTISTS',people:[
+  {n:'Lewis Latimer',y:'1848–1928',col:'#FFD54F',bio:'The son of freedom seekers, Latimer drafted the patent drawings for Alexander Graham Bell\'s telephone, then invented a carbon filament that made electric light bulbs practical and affordable. As one of Edison\'s trusted engineers, he supervised the installation of the first electric street lighting in New York, Philadelphia, and London.'},
+  {n:'Elijah McCoy',y:'1844–1929',col:'#FFD54F',bio:'Born in Canada to parents who escaped slavery via the Underground Railroad, McCoy trained in Scotland as an engineer, then invented an automatic lubricator that let trains oil themselves while running. His devices were so superior that buyers demanded "the real McCoy" — one origin claimed for the phrase. He held over 50 patents.'},
+  {n:'Granville T. Woods',y:'1856–1910',col:'#FFD54F',bio:'Called "the Black Edison," Woods held some 60 patents, including the railway telegraph that let moving trains communicate — preventing countless collisions. Edison\'s company twice challenged his patents in court; Woods won both times, and Edison then tried to hire him. He declined, preferring to remain his own man.'},
+  {n:'Jan Matzeliger',y:'1852–1889',col:'#FFD54F',bio:'An immigrant from Dutch Guiana working in a Massachusetts shoe factory, Matzeliger spent five years inventing the shoe-lasting machine — a device experts had declared impossible — which attached soles to uppers and multiplied production many times over, cutting the price of shoes in half for ordinary Americans. He died at 36, before the fortune came.'},
+  {n:'Sarah Boone',y:'1832–1904',col:'#F48FB1',bio:'Born enslaved in North Carolina, Boone became a dressmaker in New Haven and in 1892 patented an improved ironing board with a narrow, curved, padded design for pressing sleeves and fitted garments — one of the first Black women to receive a U.S. patent, and the shape is essentially the one still in use today.'},
+  {n:'Madam C.J. Walker',y:'1867–1919',col:'#F48FB1',bio:'Born Sarah Breedlove to formerly enslaved Louisiana sharecroppers, she built a haircare empire on products she developed for Black women — and on a sales force of thousands of Black women agents earning their own money. Widely recognized as America\'s first self-made woman millionaire, she gave lavishly to the NAACP\'s anti-lynching fund.'},
+  {n:'George Washington Carver',y:'c. 1864–1943',col:'#A5D6A7',bio:'Born enslaved in Missouri, Carver became Tuskegee\'s legendary agricultural scientist. He taught Southern farmers crop rotation to heal cotton-exhausted soil and developed hundreds of uses for peanuts, sweet potatoes, and soybeans — putting science directly in the hands of poor Black farmers through his mobile "Jesup wagon" classroom.'},
+  {n:'Daniel Hale Williams',y:'1856–1931',col:'#90CAF9',bio:'In 1893, Williams performed one of the first successful open-heart surgeries — repairing a stab wound to the pericardium without antibiotics or transfusion. Two years earlier he had founded Chicago\'s Provident Hospital, the nation\'s first Black-owned hospital, created so Black patients could be treated and Black nurses and doctors trained.'},
+  {n:'Garrett Morgan',y:'1877–1963',col:'#FFD54F',bio:'A Cleveland inventor with a sixth-grade education, Morgan patented a safety hood that he personally wore in 1916 to rescue workers trapped in a tunnel beneath Lake Erie, and an improved three-position traffic signal whose warning interval survives in every yellow light. He also published one of Cleveland\'s leading Black newspapers.'},
+  {n:'Charles Drew',y:'1904–1950',col:'#90CAF9',bio:'The surgeon who made blood banking possible, Drew developed techniques for processing and storing plasma, directed the "Blood for Britain" program in World War II, and led the first American Red Cross blood bank. He resigned in protest when the military insisted on segregating blood by race — a policy with no basis in science, as he publicly said.'},
+  {n:'Percy Julian',y:'1899–1975',col:'#A5D6A7',bio:'Barred from Alabama high schools by segregation, Julian became one of the century\'s great chemists — pioneering the synthesis of drugs from plants, including cortisone precursors and glaucoma medication, and holding more than 100 patents. Whites twice attacked his family\'s home in Oak Park; he kept the house and kept working.'},
+  {n:'Frederick McKinley Jones',y:'1893–1961',col:'#FFD54F',bio:'An orphaned, self-taught mechanic, Jones invented practical mobile refrigeration for trucks in the 1930s — the technology behind the modern cold chain that moves fresh food and medicine worldwide. Co-founder of Thermo King, he held over 60 patents and in 1991 became the first Black inventor awarded the National Medal of Technology.'},
+  {n:'Otis Boykin',y:'1920–1982',col:'#FFD54F',bio:'A Texas-born electrical engineer, Boykin invented an improved precision wire resistor used in televisions, computers, and guided missiles — and a control unit that made the implantable pacemaker practical. His components\' reliability under heat and stress made them a quiet standard inside the machinery of the modern world.'},
+  {n:'Marie Van Brittan Brown',y:'1922–1999',col:'#F48FB1',bio:'A nurse in Queens working irregular hours in a neighborhood with slow police response, Brown co-invented the first home security system in 1966 — peepholes, a camera, monitors, two-way audio, and a remote-controlled door lock. Her patent is cited by generations of security technology that followed.'},
+  {n:'Katherine Johnson',y:'1918–2020',col:'#82B1FF',bio:'A mathematical prodigy who entered college at fifteen, Johnson computed trajectories at NASA when "computers" were people. John Glenn refused to fly his 1962 orbital mission until she personally verified the machine\'s numbers. Her calculations helped send Apollo 11 to the Moon, and she received the Presidential Medal of Freedom in 2015.'},
+  {n:'Patricia Bath',y:'1942–2019',col:'#F48FB1',bio:'An ophthalmologist from Harlem, Bath founded the discipline of community ophthalmology after documenting that Black patients suffered preventable blindness at far higher rates. In 1986 she invented the Laserphaco Probe for cataract surgery, becoming the first Black woman physician to receive a medical patent — restoring sight to people blind for decades.'},
+  {n:'Lonnie Johnson',y:'b. 1949',col:'#FFD54F',bio:'A NASA and Air Force engineer who worked on the Galileo mission to Jupiter and stealth technology, Johnson was testing a heat pump at home in 1982 when a stream of water shot across his bathroom — the accident that became the Super Soaker, one of the best-selling toys ever. His labs now develop advanced battery and energy technology.'},
+  {n:'Mark Dean',y:'b. 1957',col:'#82B1FF',bio:'A chief engineer of the original IBM personal computer, Dean holds three of the nine foundational patents on which the PC was built, co-invented the ISA bus that let PCs use printers and monitors, and led the team that produced the first gigahertz processor chip. He became IBM\'s first Black Fellow, the company\'s highest technical honor.'},
+  {n:'Mae Jemison',y:'b. 1956',col:'#B388FF',bio:'Physician, engineer, Peace Corps medical officer — and in 1992, aboard Space Shuttle Endeavour, the first Black woman in space. Jemison began each shift in orbit with "hailing frequencies open," a nod to the Star Trek character who inspired her. She left NASA to found companies and programs advancing science literacy and a 100-year starship project.'}]},
+ {era:'BUILDERS OF BLACK WALL STREET · DURHAM',people:[
+  {n:'John Merrick',y:'1859–1919',col:'#69F0AE',bio:'Born enslaved in North Carolina, Merrick rose from brickyard laborer to owner of a chain of Durham barbershops serving both races — capital and connections he invested in his people. In 1898 he led the founding of North Carolina Mutual Life Insurance, the seed from which Durham\'s Black Wall Street grew.'},
+  {n:'Dr. Aaron McDuffie Moore',y:'1863–1923',col:'#69F0AE',bio:'Durham\'s first Black physician, Moore co-founded N.C. Mutual, founded Lincoln Hospital so Black patients could be treated with dignity, and started the Durham Colored Library. His conviction that health, capital, and knowledge had to be built together made him the quiet architect of the Hayti community\'s institutional life.'},
+  {n:'C.C. Spaulding',y:'1874–1952',col:'#69F0AE',bio:'Moore\'s nephew began at N.C. Mutual as its entire staff — agent, clerk, and janitor — and built it into the largest Black-owned business in the world. Spaulding\'s conservative discipline carried the company and Mechanics & Farmers Bank through the Depression intact, and made Durham\'s Parrish Street a national symbol of Black enterprise.'},
+  {n:'Dr. James E. Shepard',y:'1875–1947',col:'#69F0AE',bio:'A pharmacist and religious educator, Shepard founded the National Religious Training School in Durham in 1910 and willed it through fires, debts, and Depression into North Carolina College — today North Carolina Central University, the nation\'s first state-supported Black liberal arts college. Institutions, he understood, outlive arguments.'},
+  {n:'Louis Austin',y:'1898–1971',col:'#69F0AE',bio:'As editor of Durham\'s Carolina Times for four decades under the motto "The Truth Unbridled," Austin named injustices politer men preferred unnamed, helped engineer the 1933 Hocutt case — an early legal strike at segregated higher education — and pushed Durham\'s Black leadership from accommodation toward open struggle.'}]},
+ {era:'UNSUNG ORGANIZERS OF FREEDOM',people:[
+  {n:'Callie House',y:'1861–1928',col:'#F48FB1',bio:'A Tennessee washerwoman born enslaved, House organized one of the first mass reparations movements, building an association of hundreds of thousands of formerly enslaved people to demand pensions for stolen labor. The federal government, alarmed by her success, prosecuted her on dubious mail-fraud charges and imprisoned her. The demand outlived the sentence.'},
+  {n:'Anna Julia Cooper',y:'1858–1964',col:'#F48FB1',bio:'Born enslaved in Raleigh, North Carolina, Cooper earned a doctorate from the Sorbonne at 66 and wrote A Voice from the South (1892), a founding text of Black feminist thought — insisting that "only the Black woman can say when and where I enter... then and there the whole Negro race enters with me." She taught and led schools for over 70 years.'},
+  {n:'Charlotte Hawkins Brown',y:'1883–1961',col:'#F48FB1',bio:'At eighteen, Brown founded Palmer Memorial Institute in Sedalia, North Carolina, and built it over half a century into a renowned Black preparatory school. A clubwoman, suffragist, and author, she fought Jim Crow indignities in courtrooms and railway cars while educating generations of Black leaders on a campus she willed into existence.'},
+  {n:'Charles Hamilton Houston',y:'1895–1950',col:'#90CAF9',bio:'The dean who transformed Howard Law School into a civil-rights arsenal, Houston designed the long legal campaign against segregation and trained the lawyers — Thurgood Marshall above all — who executed it. "A lawyer\'s either a social engineer or a parasite," he taught. He died four years before Brown v. Board vindicated his strategy.'},
+  {n:'A. Philip Randolph',y:'1889–1979',col:'#A5D6A7',bio:'Organizer of the Brotherhood of Sleeping Car Porters, the first major Black-led union, Randolph forced Roosevelt to ban defense-industry discrimination in 1941 by threatening a march on Washington — then forced Truman to desegregate the military in 1948. The 1963 March on Washington was his idea, a quarter century in the making.'},
+  {n:'Pauli Murray',y:'1910–1985',col:'#B388FF',bio:'Raised in Durham, Murray was arrested for refusing bus segregation fifteen years before Montgomery, coined "Jane Crow" for the double bind of race and sex, and wrote the legal scholarship Thurgood Marshall called the bible of the civil rights movement. Co-founder of NOW, Murray became the first Black woman ordained an Episcopal priest.'},
+  {n:'Septima Clark',y:'1898–1987',col:'#F48FB1',bio:'A Charleston teacher fired for her NAACP membership, Clark built the Citizenship Schools — teaching thousands of Black Southerners to read, write, and register in the back rooms of stores and churches. King called her the "Mother of the Movement." The voter registration drives of the 1960s marched on the literacy she organized.'},
+  {n:'Ella Baker',y:'1903–1986',col:'#F48FB1',bio:'Raised in North Carolina and trained at Shaw University, Baker organized for the NAACP, ran the SCLC\'s office, and then midwifed SNCC — insisting the students keep their independence from the preachers. "Strong people don\'t need strong leaders," she taught. Her group-centered organizing philosophy shaped the movement\'s deepest work.'},
+  {n:'Fannie Lou Hamer',y:'1917–1977',col:'#F48FB1',bio:'A Mississippi sharecropper who learned at 44 that she had the right to vote, Hamer was evicted, jailed, and beaten nearly to death for trying to use it. She co-founded the Mississippi Freedom Democratic Party and testified before the 1964 Democratic Convention so powerfully that President Johnson called a press conference to push her off television. It didn\'t work.'},
+  {n:'Jo Ann Robinson',y:'1912–1992',col:'#CE93D8',bio:'A professor at Alabama State and president of Montgomery\'s Women\'s Political Council, Robinson had been planning a bus boycott for years. The night of Rosa Parks\'s arrest, she and two students mimeographed 35,000 leaflets before dawn. The one-day protest she launched became the 381-day boycott that broke bus segregation.'},
+  {n:'Bayard Rustin',y:'1912–1987',col:'#A5D6A7',bio:'The movement\'s master strategist, Rustin schooled King in Gandhian nonviolence and organized the 1963 March on Washington in eight weeks — a quarter million people, flawlessly executed. As an openly gay man he was pushed to the shadows by allies and enemies alike, and organized brilliantly from there anyway.'},
+  {n:'Claudette Colvin',y:'b. 1939',col:'#CE93D8',bio:'Nine months before Rosa Parks, fifteen-year-old Colvin was dragged off a Montgomery bus in handcuffs for refusing to yield her seat, citing the constitutional rights she\'d been studying in school. She became a plaintiff in Browder v. Gayle, the case that actually struck down Montgomery\'s bus segregation — a teenager\'s defiance, vindicated in federal court.'},
+  {n:'Medgar Evers',y:'1925–1963',col:'#90CAF9',bio:'A World War II veteran and the NAACP\'s first field secretary in Mississippi, Evers investigated the Emmett Till murder, organized boycotts, and fought for voter registration in the nation\'s most violent state — knowing precisely what it would cost. Assassinated in his own driveway in June 1963, he became the movement\'s solemn proof of the stakes.'},
+  {n:'Dorothy Height',y:'1912–2010',col:'#F48FB1',bio:'For forty years the president of the National Council of Negro Women, Height was the highest-ranking woman in the civil rights leadership — on the platform at the March on Washington, though not invited to speak. She ran "Wednesdays in Mississippi," wove women\'s organizations into the movement\'s spine, and outworked nearly everyone in it.'},
+  {n:'Diane Nash',y:'b. 1938',col:'#CE93D8',bio:'A Fisk student who led the Nashville sit-ins with unshakable discipline, Nash made her city the first in the South to desegregate lunch counters. When violence halted the 1961 Freedom Rides, she organized their continuation, telling a federal official the students had signed their wills. She later helped design the Selma voting rights campaign.'},
+  {n:'Constance Baker Motley',y:'1921–2005',col:'#90CAF9',bio:'The NAACP\'s legal star wrote the original complaint in Brown v. Board, argued ten cases before the Supreme Court and won nine, and personally escorted James Meredith through the mob at Ole Miss. In 1966 she became the first Black woman appointed a federal judge, where she served for nearly four decades.'}]},
+ {era:'CHRONICLERS · KEEPERS OF THE RECORD',people:[
+  {n:'Carter G. Woodson',y:'1875–1950',col:'#FFD54F',bio:'The son of formerly enslaved parents, Woodson worked the coal mines of West Virginia before earning a Harvard doctorate. Convinced that a people\'s history is its armor, he founded the Association for the Study of Negro Life and History in 1915 and launched Negro History Week in 1926 — the seed of Black History Month. He is the father of Black history as a discipline.'},
+  {n:'Howard Thurman',y:'1899–1981',col:'#B388FF',bio:'Theologian, mystic, and dean of chapels at Howard and Boston University, Thurman traveled to meet Gandhi in 1936 and carried back the question of nonviolence for Black America. His Jesus and the Disinherited — a book King reportedly carried with him — gave the freedom movement its deepest spiritual grammar: religion as the resource of those with their backs against the wall.'},
+  {n:'Earl E. Thorpe',y:'1924–1989',col:'#FFD54F',bio:'A pioneering historian at North Carolina College — now North Carolina Central University — Thorpe wrote foundational studies of Black historiography and intellectual life, including Negro Historians in the United States and The Mind of the Negro. He insisted that the inner life of Black America, its ideas and self-understanding, was itself a subject worthy of rigorous history.'},
+  {n:'John Hope Franklin',y:'1915–2009',col:'#FFD54F',bio:'Author of From Slavery to Freedom, the landmark survey that has taught generations, Franklin wrote Black history into the center of the American story. He assisted the NAACP\'s Brown v. Board litigation, chaired a presidential initiative on race, and spent his final decades in Durham as a Duke professor and the profession\'s elder statesman.'}]},
+ {era:'INTO THE PRESENT',people:[
+  {n:'James Baldwin',y:'1924–1987',col:'#B388FF',bio:'The preacher\'s stepson from Harlem became the American century\'s most piercing essayist on race, love, and the national conscience. The Fire Next Time made him the movement\'s literary witness; his novels told truths about identity that few dared print. "Not everything that is faced can be changed," he wrote, "but nothing can be changed until it is faced."'},
+  {n:'Shirley Chisholm',y:'1924–2005',col:'#F48FB1',bio:'"Unbought and unbossed," Chisholm became the first Black woman elected to Congress in 1968 and, in 1972, the first Black candidate and first woman to seriously contest a major party\'s presidential nomination. She hired an all-female first office staff and spent seven terms championing the poor, women, and children.'},
+  {n:'Barbara Jordan',y:'1936–1996',col:'#CE93D8',bio:'The first Black woman elected to Congress from the South, Jordan\'s thunderous 1974 Watergate speech — "My faith in the Constitution is whole, it is complete, it is total" — made her the moral voice of the hearings. In 1976 she became the first Black keynote speaker at a major party convention, twice voted among America\'s most trusted public figures.'},
+  {n:'Toni Morrison',y:'1931–2019',col:'#F48FB1',bio:'As an editor at Random House, Morrison brought Black writers into American publishing; as a novelist she rebuilt the language itself. Beloved, Song of Solomon, and The Bluest Eye placed Black interior life at the center of world literature, and in 1993 she became the first Black woman awarded the Nobel Prize in Literature.'},
+  {n:'Maya Angelou',y:'1928–2014',col:'#F48FB1',bio:'Dancer, singer, movement organizer for King and Malcolm, and finally the poet whose I Know Why the Caged Bird Sings turned autobiography into a national inheritance. Angelou read "On the Pulse of Morning" at the 1993 presidential inauguration and spent her last decades teaching at Wake Forest in North Carolina — a voice of hard-won grace.'},
+  {n:'John Lewis',y:'1940–2020',col:'#FFD700',bio:'The youngest speaker at the March on Washington, chairman of SNCC, beaten nearly to death leading marchers across the Edmund Pettus Bridge on Bloody Sunday 1965. Lewis carried the movement\'s memory into 17 terms in Congress, where colleagues of both parties called him "the conscience of the House." His counsel: get in good trouble, necessary trouble.'},
+  {n:'Barack Obama',y:'b. 1961',col:'#82B1FF',bio:'A community organizer from Chicago\'s South Side and constitutional law professor, Obama was elected the 44th President of the United States in 2008 — the first Black American to hold the office — and re-elected in 2012. Whatever one\'s politics, the image of his family in a White House built partly by enslaved labor marked a turning in the American story.'},
+  {n:'Kamala Harris',y:'b. 1964',col:'#F48FB1',bio:'The daughter of Jamaican and Indian immigrants and a graduate of Howard University, Harris served as California\'s attorney general and U.S. senator before becoming, in 2021, the first woman, first Black American, and first South Asian American to hold the vice presidency of the United States.'},
+  {n:'Bryan Stevenson',y:'b. 1959',col:'#90CAF9',bio:'Founder of the Equal Justice Initiative, Stevenson has won relief for scores of condemned prisoners and argued landmark Supreme Court cases limiting extreme sentences for children. His memoir Just Mercy and the National Memorial for Peace and Justice — honoring lynching victims — carry the record of racial terror into the nation\'s living memory.'},
+  {n:'Amanda Gorman',y:'b. 1998',col:'#B388FF',bio:'The first National Youth Poet Laureate of the United States, Gorman recited "The Hill We Climb" at the 2021 presidential inauguration at age 22 — the youngest inaugural poet in American history — telling a shaken country that there is always light, "if only we\'re brave enough to see it, if only we\'re brave enough to be it."'}]},
+];
+let encyEra=-1; // -1 = all eras
+function renderEncy(){
+  const q=(document.getElementById('esearch').value||'').trim().toLowerCase();
+  const list=document.getElementById('encyList');
+  let h='',shown=0;
+  BIOS.forEach((g,gi)=>{
+    if(encyEra>-1&&encyEra!==gi)return;
+    const people=g.people.filter(p=>!q||p.n.toLowerCase().includes(q)||p.bio.toLowerCase().includes(q)||p.y.includes(q));
+    if(!people.length)return;
+    h+=`<div class="eera">${g.era}</div>`;
+    for(const p of people){
+      shown++;
+      const init=p.n.split(' ').map(w=>w[0]).join('').replace(/[^A-Z]/g,'').slice(0,2);
+      h+=`<div class="ecard"><div class="emed" style="background:${p.col}">${init}</div>`+
+         `<div class="ebody"><div class="ename">${p.n}</div><div class="eyears">${p.y}</div>`+
+         `<div class="ebio">${p.bio}</div></div></div>`;
+    }
+  });
+  const total=BIOS.reduce((a,g)=>a+g.people.length,0);
+  document.getElementById('ecount').textContent=
+    shown===total?`${total} ancestors`:`${shown} of ${total} ancestors`;
+  list.innerHTML=h||'';
+  if(!shown)list.innerHTML=`<div class="enone">No ancestor found for "${q}". Every search that comes up empty is a research question waiting to be answered.</div>`;
+}
+function setEncyEra(i){
+  encyEra=i;
+  document.querySelectorAll('.echip').forEach((c,k)=>c.classList.toggle('sel',k===i+1));
+  renderEncy();
+}
+function openEncy(){
+  const chips=document.getElementById('echips');
+  if(!chips.dataset.built){
+    let ch=`<button class="echip sel" onclick="setEncyEra(-1)">ALL ERAS</button>`;
+    BIOS.forEach((g,i)=>{ch+=`<button class="echip" onclick="setEncyEra(${i})">${g.era.split('·')[0].trim()}</button>`;});
+    chips.innerHTML=ch;chips.dataset.built='1';
+    renderEncy();
+  }
+  document.getElementById('ency').classList.add('open');
+}
+function closeEncy(){document.getElementById('ency').classList.remove('open');}
 
 // ══════ QUIZ SYSTEM ══════
 function triggerQuiz(){
@@ -1568,6 +1892,31 @@ function render(){
       if(pl>0.7){c.beginPath();c.arc(x,y,1.5,0,Math.PI*2);c.fill();}
     }
   }
+  // 0.5 Zone ambience — drifting era-specific particles
+  if(ambZone!==zone){ambZone=zone;ambP=[];
+    for(let i=0;i<26;i++)ambP.push({x:Math.random()*WW,y:Math.random()*WH,
+      s:0.5+Math.random()*1.5,ph:Math.random()*Math.PI*2,sp:0.15+Math.random()*0.35});
+  }
+  ambP.forEach(a=>{
+    // motion per era
+    if(zone===0){a.x+=a.sp*0.5;a.y+=Math.sin(tick*0.02+a.ph)*0.15;}          // cotton motes drift
+    else if(zone===1){a.x+=Math.sin(tick*0.03+a.ph)*0.4;a.y+=Math.cos(tick*0.025+a.ph)*0.3;} // fireflies wander
+    else if(zone===2){a.x+=a.sp*0.4;a.y+=a.sp*0.8;}                          // falling leaves
+    else if(zone===3){a.x+=a.sp*0.9;a.y+=Math.sin(tick*0.03+a.ph)*0.2;}      // wind-blown dust
+    else{a.y-=a.sp*0.6;a.x+=Math.sin(tick*0.04+a.ph)*0.3;}                   // neon embers rise
+    if(a.x>WW)a.x=0;if(a.x<0)a.x=WW;if(a.y>WH)a.y=0;if(a.y<0)a.y=WH;
+    const ax=a.x-cx,ay=a.y-cy;
+    if(ax<-10||ax>VW+10||ay<-10||ay>VH+10)return;
+    const tw=0.5+0.5*Math.sin(tick*0.08+a.ph*3);
+    if(zone===0){c.fillStyle='rgba(245,240,225,'+(0.25*tw)+')';c.beginPath();c.arc(ax,ay,a.s+0.5,0,Math.PI*2);c.fill();}
+    else if(zone===1){c.fillStyle='rgba(220,255,140,'+(0.55*tw)+')';c.beginPath();c.arc(ax,ay,a.s,0,Math.PI*2);c.fill();
+      if(tw>0.75){c.fillStyle='rgba(220,255,140,0.12)';c.beginPath();c.arc(ax,ay,a.s*4,0,Math.PI*2);c.fill();}}
+    else if(zone===2){c.fillStyle='rgba(215,140,60,'+(0.4*tw)+')';
+      c.save();c.translate(ax,ay);c.rotate(tick*0.02+a.ph);c.fillRect(-2,-1.2,4,2.4);c.restore();}
+    else if(zone===3){c.fillStyle='rgba(200,200,210,'+(0.22*tw)+')';c.beginPath();c.arc(ax,ay,a.s*0.8,0,Math.PI*2);c.fill();}
+    else{const ec=zone>=5?'rgba(210,150,255,':'rgba(160,120,255,';
+      c.fillStyle=ec+(0.4*tw)+')';c.beginPath();c.arc(ax,ay,a.s,0,Math.PI*2);c.fill();}
+  });
   // 1. Color tint wash over the whole scene
   if(Z.tint){ c.fillStyle=Z.tint; c.fillRect(0,0,VW,VH); }
   // 2. Radial vignette — darkens edges, spotlights the player
@@ -1588,27 +1937,32 @@ function drawTile(c,t,sx,sy,col,row){
   const seed=(col*73+row*127)%100;  // deterministic per-tile variation
   switch(t){
     case GR:{
-      // Grass: vertical gradient + noise dapples + blade tufts
+      const P=PAL[zone];
       const g=c.createLinearGradient(sx,sy,sx,sy+TS);
-      g.addColorStop(0,'#367019');g.addColorStop(1,'#274f12');
+      g.addColorStop(0,P.g1);g.addColorStop(1,P.g2);
       c.fillStyle=g;c.fillRect(sx,sy,TS,TS);
+      tileJitter(c,sx,sy,seed);
       // dappled light patches
-      c.fillStyle='rgba(120,180,60,0.10)';
+      c.fillStyle=P.dp;
       c.fillRect(sx+(seed%20),sy+(seed%14),12,9);
       c.fillRect(sx+TS-14-(seed%10),sy+TS-16,10,8);
-      // blade tufts
-      c.strokeStyle='#43892a';c.lineWidth=2;
+      // swaying blade tufts
+      const sw=Math.sin(tick*0.055+col*1.3+row*0.7)*1.6;
+      c.strokeStyle=P.tf;c.lineWidth=2;
       if((col+row)%2===0){
         c.beginPath();
-        c.moveTo(sx+8,sy+TS-4);c.lineTo(sx+7,sy+TS-12);
-        c.moveTo(sx+12,sy+TS-4);c.lineTo(sx+13,sy+TS-13);
-        c.moveTo(sx+10,sy+TS-4);c.lineTo(sx+10,sy+TS-14);c.stroke();
+        c.moveTo(sx+8,sy+TS-4);c.lineTo(sx+7+sw,sy+TS-12);
+        c.moveTo(sx+12,sy+TS-4);c.lineTo(sx+13+sw,sy+TS-13);
+        c.moveTo(sx+10,sy+TS-4);c.lineTo(sx+10+sw,sy+TS-14);c.stroke();
       }
       if((col*2+row)%3===0){
         c.beginPath();
-        c.moveTo(sx+TS-12,sy+TS-4);c.lineTo(sx+TS-13,sy+TS-11);
-        c.moveTo(sx+TS-8,sy+TS-4);c.lineTo(sx+TS-7,sy+TS-12);c.stroke();
+        c.moveTo(sx+TS-12,sy+TS-4);c.lineTo(sx+TS-13+sw,sy+TS-11);
+        c.moveTo(sx+TS-8,sy+TS-4);c.lineTo(sx+TS-7+sw,sy+TS-12);c.stroke();
       }
+      // scattered clover / pebble accents on some tiles
+      if(seed%11===3){c.fillStyle='rgba(255,255,255,0.18)';c.beginPath();c.arc(sx+6+(seed%22),sy+8+(seed%18),1.5,0,Math.PI*2);c.fill();}
+      castAO(c,sx,sy,col,row);
       break;}
     case CO:{
       // Cotton field: soil rows + white bolls with shadow
@@ -1628,29 +1982,51 @@ function drawTile(c,t,sx,sy,col,row){
       c.fillStyle='#3a6614';for(let i=0;i<4;i++)c.fillRect(sx+i*10+2,sy+4,2,4);
       break;}
     case PT:{
-      // Path: warm sandy gradient + pebbles + edge shading
+      const P=PAL[zone];
       const g=c.createLinearGradient(sx,sy,sx,sy+TS);
-      g.addColorStop(0,'#c2a468');g.addColorStop(1,'#a88c52');
+      g.addColorStop(0,P.p1);g.addColorStop(1,P.p2);
       c.fillStyle=g;c.fillRect(sx,sy,TS,TS);
-      c.fillStyle='rgba(90,60,20,0.15)';
-      c.fillRect(sx,sy,TS,2);c.fillRect(sx,sy,2,TS);
+      tileJitter(c,sx,sy,seed);
+      // wheel-rut wear lines
+      c.fillStyle='rgba(0,0,0,0.06)';
+      c.fillRect(sx,sy+10+(seed%4),TS,3);c.fillRect(sx,sy+26-(seed%4),TS,3);
       // pebbles
-      c.fillStyle='rgba(120,90,50,0.4)';
+      c.fillStyle=P.pd;
       c.beginPath();c.arc(sx+8+(seed%18),sy+10+(seed%12),2,0,Math.PI*2);c.fill();
       c.beginPath();c.arc(sx+TS-12-(seed%8),sy+TS-10,1.5,0,Math.PI*2);c.fill();
+      grassFringe(c,sx,sy,col,row,P);
+      castAO(c,sx,sy,col,row);
       break;}
     case DT:{
+      const P=PAL[zone];
       const g=c.createLinearGradient(sx,sy,sx,sy+TS);
-      g.addColorStop(0,'#875a33');g.addColorStop(1,'#6d4726');
-      c.fillStyle=g;c.fillRect(sx,sy,TS,TS);
+      g.addColorStop(0,P.sl);g.addColorStop(1,'#00000022');
+      c.fillStyle=P.sl;c.fillRect(sx,sy,TS,TS);
+      c.fillStyle='rgba(0,0,0,0.14)';c.fillRect(sx,sy+TS-8,TS,8);
+      tileJitter(c,sx,sy,seed);
       c.fillStyle='rgba(50,30,10,0.25)';
       c.fillRect(sx+4+(seed%10),sy+6,6,3);c.fillRect(sx+TS-14,sy+TS-12,7,3);
+      // cracked earth lines
+      c.strokeStyle='rgba(0,0,0,0.12)';c.lineWidth=1;
+      c.beginPath();c.moveTo(sx+(seed%12),sy+TS);c.lineTo(sx+14+(seed%10),sy+22);c.lineTo(sx+10,sy+10);c.stroke();
+      grassFringe(c,sx,sy,col,row,P);
+      castAO(c,sx,sy,col,row);
       break;}
     case RD:{
+      const night=zone===1||zone>=4;
       const g=c.createLinearGradient(sx,sy,sx,sy+TS);
-      g.addColorStop(0,'#7a2800');g.addColorStop(1,'#5a1a00');
+      if(night){g.addColorStop(0,'#2c2c34');g.addColorStop(1,'#1c1c24');}
+      else{g.addColorStop(0,'#7a2800');g.addColorStop(1,'#5a1a00');}
       c.fillStyle=g;c.fillRect(sx,sy,TS,TS);
-      c.fillStyle='#FFD700';c.fillRect(sx+TS/2-1,sy,2,TS);
+      tileJitter(c,sx,sy,seed);
+      // patched asphalt blotch
+      c.fillStyle='rgba(0,0,0,0.15)';
+      c.fillRect(sx+(seed%16),sy+8+(seed%14),10+(seed%6),6);
+      // worn center dashes
+      c.fillStyle=night?'rgba(255,215,0,0.85)':'#FFD700';
+      c.fillRect(sx+TS/2-1,sy+2,2,12);c.fillRect(sx+TS/2-1,sy+22,2,12);
+      grassFringe(c,sx,sy,col,row,PAL[zone]);
+      castAO(c,sx,sy,col,row);
       break;}
     case WA:{
       // Water: layered waves + shimmer
@@ -1663,8 +2039,9 @@ function drawTile(c,t,sx,sy,col,row){
       c.fillStyle='rgba(200,235,255,0.5)';c.fillRect(sx+TS-14,sy+18+w2,8,1);
       break;}
     case TR:{
-      // Tree: layered canopy with highlight + trunk shadow
-      c.fillStyle=TBASE[GR];c.fillRect(sx,sy,TS,TS);
+      // Tree: layered canopy with highlight + trunk shadow, on zone ground
+      c.fillStyle=PAL[zone].g2;c.fillRect(sx,sy,TS,TS);
+      tileJitter(c,sx,sy,seed);
       c.fillStyle='rgba(0,0,0,0.25)';c.beginPath();c.ellipse(sx+TS/2,sy+TS-6,TS/2-3,5,0,0,Math.PI*2);c.fill();
       c.fillStyle='#4a2f16';c.fillRect(sx+TS/2-4,sy+TS/2+2,8,TS/2-4);
       c.fillStyle='#5D3A1A';c.fillRect(sx+TS/2-4,sy+TS/2+2,3,TS/2-4);
@@ -1684,8 +2061,8 @@ function drawTile(c,t,sx,sy,col,row){
       for(let i=0;i<3;i++){c.beginPath();c.moveTo(sx,sy+i*(TS/3)+7);c.lineTo(sx+TS,sy+i*(TS/3)+7);c.stroke();}
       break;}
     case HO:{
-      // House/cabin: gradient roof, walls, warm windows
-      c.fillStyle=TBASE[GR];c.fillRect(sx,sy,TS,TS);
+      // House/cabin: gradient roof, walls, warm windows, on zone ground
+      c.fillStyle=PAL[zone].g2;c.fillRect(sx,sy,TS,TS);
       c.fillStyle='#9e2020';c.fillRect(sx+4,sy+18,TS-8,TS-18);
       c.fillStyle='rgba(0,0,0,0.2)';c.fillRect(sx+4,sy+18,TS-8,3);
       const rg=c.createLinearGradient(sx,sy+2,sx,sy+20);
@@ -1696,10 +2073,11 @@ function drawTile(c,t,sx,sy,col,row){
       c.fillStyle='rgba(255,180,80,0.4)';c.fillRect(sx+6,sy+23,8,8);c.fillRect(sx+TS-14,sy+23,8,8);
       break;}
     case FL:{
-      c.fillStyle=TBASE[GR];
+      const Pf=PAL[zone];
       const g=c.createLinearGradient(sx,sy,sx,sy+TS);
-      g.addColorStop(0,'#367019');g.addColorStop(1,'#274f12');
+      g.addColorStop(0,Pf.g1);g.addColorStop(1,Pf.g2);
       c.fillStyle=g;c.fillRect(sx,sy,TS,TS);
+      tileJitter(c,sx,sy,seed);
       [['#FFD54F',9,10],['#FF9800',24,18],['#EC407A',33,9],['#FFD54F',16,27]].forEach(([fc,fx,fy],i)=>{
         if((col*2+row+i)%3!==0){
           c.fillStyle='#2e5010';c.fillRect(sx+fx-1,sy+fy+4,2,7);
@@ -1909,6 +2287,10 @@ function drawEnemy(c,e,cx,cy){
     c.globalAlpha=Math.max(0,1-e.dt/35);c.font='26px serif';c.textAlign='center';
     c.fillText(tier>=2?'💥':'💀',sx,sy+8);c.globalAlpha=1;return;
   }
+
+  // grounding shadow
+  c.fillStyle='rgba(0,0,0,0.28)';c.beginPath();
+  c.ellipse(sx,sy+18,12,4.5,0,0,Math.PI*2);c.fill();
 
   if(e.minion){
     // minion — evolves with tier
@@ -2405,7 +2787,12 @@ function collectItem(i){
   itemState[i]=true;score+=75;updHUD();sfx('pickup');
   const it=ITEMS[i];
   spawnPfx(it.tc*TS+24,it.tr*TS+24,'#D4AF37','★',10);
-  notify(`✨ ${it.emoji} ${it.label} — +75`);
+  let healed='';
+  if(DIFFS[diff].itemHeal&&php<pmaxhp){
+    php=Math.min(pmaxhp,php+0.5);buildHearts();healed=' · +½♥';
+    spawnPfx(px,py,'#FF6E8A','♥',5);
+  }
+  notify(`✨ ${it.emoji} ${it.label} — +75${healed}`);
   setTimeout(()=>openDlg('📖 Ancestral Knowledge',it.lore),900);
 }
 function mapDlg(){
@@ -2436,7 +2823,11 @@ function buildHearts(){
   const row=document.getElementById('hrow');row.innerHTML='';
   for(let i=0;i<pmaxhp;i++){
     const d=document.createElement('span');
-    d.textContent=i<php?'♥':'♡';d.style.color=i<php?'#FF1744':'#555';row.appendChild(d);
+    const fill=php-i; // >=1 full, 0.5 half, <=0 empty
+    if(fill>=1){d.textContent='♥';d.style.color='#FF1744';}
+    else if(fill>=0.5){d.textContent='♥';d.className='hhalf';}
+    else{d.textContent='♡';d.style.color='#555';}
+    row.appendChild(d);
   }
   buildShieldPips();
 }
