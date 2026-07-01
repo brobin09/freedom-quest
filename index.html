@@ -208,6 +208,29 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
 @keyframes farpulse{0%,100%{box-shadow:0 0 4px #B388FF;}50%{box-shadow:0 0 16px #E0B0FF,0 0 24px #B388FF;}}
 .farmeter{width:44px;height:4px;background:rgba(0,0,0,0.5);border-radius:2px;overflow:hidden;}
 #farfill{height:100%;width:0%;background:linear-gradient(90deg,#7C4DFF,#E0B0FF);transition:width 0.2s;}
+#bossAssist{
+  display:none; position:absolute; left:50%; transform:translateX(-50%);
+  bottom:210px; z-index:13; gap:10px; pointer-events:none;
+}
+#bossAssist.on{ display:flex; }
+.bassist{
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  width:96px; height:52px; border-radius:12px; border:2.5px solid;
+  pointer-events:auto; user-select:none; -webkit-user-select:none; touch-action:none;
+  font-family:Georgia,serif; line-height:1.1;
+}
+.bassist:active{ transform:scale(.9); }
+.bassist .bicon{ font-size:18px; }
+.bassist .blabel{ font-size:8px; font-weight:900; letter-spacing:1px; }
+.bassist .bcount{ font-size:9px; font-weight:900; }
+.anc{ background:rgba(120,80,20,.92); border-color:#FFD54F; color:#fff3d0; }
+.pray{ background:rgba(70,45,110,.92); border-color:#CE93D8; color:#f0e0ff; }
+.bassist.spent{ opacity:0.35; filter:grayscale(1); }
+/* Landscape: move assist bar up out of the way */
+@media (orientation:landscape) and (pointer:coarse){
+  #bossAssist{ bottom:auto; top:12px; }
+}
+
 
 /* ============ LANDSCAPE MODE (phone/tablet horizontal) ============ */
 /* Controls float over the sides so the canvas keeps the full screen,
@@ -303,7 +326,7 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
       <div class="objrow objgate" id="obj-gate"><span class="objicon">🚪</span><span class="objtxt" id="objGateTxt">Portal locked</span></div>
     </div>
     <div id="bossbar">
-      <div class="bl">👹 HEAD SLAVE CATCHER</div>
+      <div class="bl">📺 THE BROADCAST</div>
       <div class="bt"><div class="bf" id="bossHpBar" style="width:100%"></div></div>
     </div>
     <div id="wavemsg">⚠ Slave catchers patrol — find the Ancestors!</div>
@@ -326,6 +349,16 @@ html,body{width:100%;height:100%;overflow:hidden;background:#000;font-family:Geo
     <div class="qopts" id="qopts"></div>
     <div class="qresult" id="qresult"></div>
     <button class="qnext" id="qnext" onclick="quizNext()">NEXT ▶</button>
+  </div>
+
+  <!-- Boss assist bar (shown only during final boss) -->
+  <div id="bossAssist">
+    <div class="bassist anc" id="ancBtn" ontouchstart="callAncestors()" onmousedown="callAncestors()">
+      <span class="bicon">🧑🏿</span><span class="blabel">ANCESTORS</span><span class="bcount" id="ancCount">2</span>
+    </div>
+    <div class="bassist pray" id="prayBtn" ontouchstart="callPrayer()" onmousedown="callPrayer()">
+      <span class="bicon">🙏</span><span class="blabel">PRAYER</span><span class="bcount" id="prayCount">1</span>
+    </div>
   </div>
 
   <!-- Touch controller -->
@@ -654,27 +687,33 @@ const QUIZZES=[
   // Zone 0 — Plantation
   [{q:"What did the Underground Railroad actually refer to?",opts:["A literal railroad underground","A secret network of safe routes and helpers guiding enslaved people to freedom","A legal escape route established by Congress","A network of tunnels built by abolitionists"],ans:1},
    {q:"Which 1850 law required Northerners to help return escaped enslaved people?",opts:["The Missouri Compromise","The Emancipation Proclamation","The Fugitive Slave Act","The Kansas-Nebraska Act"],ans:2},
-   {q:"What did enslaved people primarily use to navigate north at night?",opts:["Compass needles","The North Star (Polaris)","River currents","Road signs"],ans:1}],
+   {q:"What did enslaved people primarily use to navigate north at night?",opts:["Compass needles","The North Star (Polaris)","River currents","Road signs"],ans:1},
+   {q:"Roughly how long did slavery last in the American colonies and United States?",opts:["About 50 years","About 100 years","About 250 years","About 400 years"],ans:2}],
   // Zone 1 — Underground Railroad
   [{q:"How many people did Harriet Tubman free via the Underground Railroad?",opts:["About 30","About 300","Over 700","Hundreds — estimates range from 70 to 300+"],ans:3},
    {q:"Frederick Douglass escaped slavery in 1838 disguised as what?",opts:["A Union soldier","A free Black sailor","A white plantation owner","A traveling preacher"],ans:1},
-   {q:"What was a 'conductor' on the Underground Railroad?",opts:["A train engineer","Someone who guided freedom seekers between safe houses","A person who printed abolitionist newspapers","A lawyer who defended escaped enslaved people"],ans:1}],
+   {q:"What was a 'conductor' on the Underground Railroad?",opts:["A train engineer","Someone who guided freedom seekers between safe houses","A person who printed abolitionist newspapers","A lawyer who defended escaped enslaved people"],ans:1},
+   {q:"Harriet Tubman was nicknamed what for her rescue missions?",opts:["The General","Moses","The Conductor","Lady Liberty"],ans:1}],
   // Zone 2 — Free North
   [{q:"When did Lincoln's Emancipation Proclamation take effect?",opts:["July 4, 1863","January 1, 1863","April 9, 1865","December 6, 1865"],ans:1},
    {q:"The 13th Amendment (1865) did which of the following?",opts:["Gave Black men the right to vote","Abolished slavery throughout the United States","Guaranteed equal protection under law","Established the Freedmen's Bureau"],ans:1},
-   {q:"What was the Freedmen's Bureau?",opts:["A federal agency helping formerly enslaved people transition to freedom","A newspaper for free Black citizens","A political party for Reconstruction","A court that tried slave catchers"],ans:0}],
+   {q:"What was the Freedmen's Bureau?",opts:["A federal agency helping formerly enslaved people transition to freedom","A newspaper for free Black citizens","A political party for Reconstruction","A court that tried slave catchers"],ans:0},
+   {q:"The 15th Amendment (1870) granted what?",opts:["Freedom from slavery","Citizenship to all born in the US","The right to vote regardless of race","Equal protection under law"],ans:2}],
   // Zone 3 — Jim Crow
   [{q:"What were 'Jim Crow laws'?",opts:["Federal laws protecting Black voting rights","State and local laws enforcing racial segregation in the South","Laws banning Black immigration to the North","Anti-lynching legislation passed by Congress"],ans:1},
    {q:"Ida B. Wells was famous for her campaign against what?",opts:["School segregation","Lynching and racial terror violence","Voter suppression laws","Economic discrimination in the North"],ans:1},
-   {q:"The Great Migration (1910–1970) involved what?",opts:["Black Americans moving from the North to the South","White Southerners moving west","Over 6 million Black Americans moving from the South to Northern and Western cities","The migration of freed enslaved people to Africa"],ans:2}],
+   {q:"The Great Migration (1910–1970) involved what?",opts:["Black Americans moving from the North to the South","White Southerners moving west","Over 6 million Black Americans moving from the South to Northern and Western cities","The migration of freed enslaved people to Africa"],ans:2},
+   {q:"The 1896 Supreme Court case Plessy v. Ferguson established what doctrine?",opts:["\"One person, one vote\"","\"Separate but equal\"","\"Due process\"","\"Equal protection\""],ans:1}],
   // Zone 4 — Harlem Renaissance
   [{q:"The Harlem Renaissance was primarily a flourishing of what?",opts:["Political parties","Black art, literature, music, and intellectual life","Labor unions","Military regiments"],ans:1},
    {q:"Which poet wrote 'The Negro Speaks of Rivers' and 'Harlem (A Dream Deferred)'?",opts:["Countee Cullen","Claude McKay","Langston Hughes","Jean Toomer"],ans:2},
-   {q:"Marcus Garvey is best known for founding what?",opts:["The NAACP","The Universal Negro Improvement Association (UNIA)","The Urban League","The Nation of Islam"],ans:1}],
+   {q:"Marcus Garvey is best known for founding what?",opts:["The NAACP","The Universal Negro Improvement Association (UNIA)","The Urban League","The Nation of Islam"],ans:1},
+   {q:"Which author wrote 'Their Eyes Were Watching God' and collected Black folklore?",opts:["Nella Larsen","Zora Neale Hurston","Dorothy West","Jessie Fauset"],ans:1}],
   // Zone 5 — Boss / Civil Rights
   [{q:"The 1963 March on Washington drew how many participants?",opts:["About 50,000","About 100,000","About 250,000","Over 1 million"],ans:2},
    {q:"Rosa Parks refused to give up her bus seat in which city?",opts:["Birmingham, Alabama","Atlanta, Georgia","Montgomery, Alabama","Selma, Alabama"],ans:2},
-   {q:"The Civil Rights Act of 1964 did which of the following?",opts:["Only banned school segregation","Outlawed discrimination based on race, color, religion, sex, or national origin","Gave Black Americans the right to vote","Abolished the poll tax"],ans:1}],
+   {q:"The Civil Rights Act of 1964 did which of the following?",opts:["Only banned school segregation","Outlawed discrimination based on race, color, religion, sex, or national origin","Gave Black Americans the right to vote","Abolished the poll tax"],ans:1},
+   {q:"The Voting Rights Act of 1965 primarily did what?",opts:["Ended school segregation","Banned discriminatory voting practices like literacy tests","Created affirmative action","Desegregated the military"],ans:1}],
 ];
 
 // ══════ NPCs ══════
@@ -730,7 +769,7 @@ const NPCS=[
   {id:'ZORA',zone:4,tc:17,tr:8,name:'Zora Neale Hurston',col:'#F48FB1',draw:'drawZora',
    lines:["I went to the South with a notebook and gathered our folktales, our songs, our ways of speaking — before they could be forgotten or erased.",
            "Sometimes I feel discriminated against, but it does not make me angry. It merely astonishes me. How can anyone deny themselves the pleasure of my company? Now — collect your people's stories."]},
-  {id:'GARVEY',zone:4,tc:11,tr:16,name:'Marcus Garvey',col:'#69F0AE',draw:'drawGarvey',
+  {id:'GARVEY',zone:4,tc:8,tr:16,name:'Marcus Garvey',col:'#69F0AE',draw:'drawGarvey',
    lines:["I built the largest Black organization in history — millions strong across the world. Up, you mighty race, accomplish what you will!",
            "A people without knowledge of their history is like a tree without roots. I gave them a flag, a purpose, a pride. Carry it forward. The final battle awaits."]},
   // Zone 5 — Civil Rights Boss
@@ -805,6 +844,10 @@ let farCharge=0;               // 0..farMax
 const farMax=100;
 let farBlast=0;                // active blast animation timer
 let farRings=[];               // expanding shockwave rings
+// Boss assists — ancestors help twice, prayer once
+let ancestorHelp=2, prayerHelp=1;
+let spiritGuides=[];           // visiting ancestor spirits animation
+let prayerGlow=0;              // prayer aura timer
 // Game feel
 let shakeAmt=0;      // screen shake magnitude
 let shakeDecay=0.85;
@@ -845,6 +888,7 @@ let spawnTimer=0,notifT=null;
 let pfx=[];
 // Quiz state
 let quizZone=-1,quizQs=[],quizIdx=0,quizCorrect=0,quizAnswered=false;
+let quizPassed={};  // zone -> true once quiz completed
 
 function resetState(){
   zone=0;tick=0;score=0;defeated=0;
@@ -855,12 +899,13 @@ function resetState(){
   swActive=false;swTimer=0;swCool=0;bullets=[];muzzle=0;
   shield=0;shieldMax=0;shieldRegen=0;shieldFlash=0;segAmbushed=false;
   farCharge=0;farBlast=0;farRings=[];shakeAmt=0;hitPause=0;
+  ancestorHelp=2;prayerHelp=1;spiritGuides=[];prayerGlow=0;
   enemies=[];eidx=0;boss=null;bossActive=false;
   npcState={};NPCS.forEach(n=>npcState[n.id]={met:false,didx:0});
   itemState={};ITEMS.forEach((_,i)=>itemState[i]=false);
   dlgOpen=false;quizOpen=false;
   transitioning=false;gameOver=false;won=false;
-  spawnTimer=0;pfx=[];quizZone=-1;
+  spawnTimer=0;pfx=[];quizZone=-1;quizPassed={};
   document.getElementById('ov').style.display='none';
   document.getElementById('quiz').style.display='none';
   document.getElementById('bossbar').style.display='none';
@@ -878,8 +923,10 @@ function mkEnemy(epx,epy,zi){
 function startBoss(){
   boss=makeBoss();bossActive=true;
   document.getElementById('bossbar').style.display='block';
-  setTimeout(()=>openDlg('👹 THE HEAD SLAVE CATCHER',
-    'The master of all slave catchers stands before you. He spawns minions when wounded. Three phases — defeat all to reach Freedom. Fight for every ancestor who came before you!'),500);
+  document.getElementById('bossAssist').classList.add('on');
+  updBossAssists();
+  setTimeout(()=>openDlg('📺 THE BROADCAST',
+    'The Broadcast — the machine that beamed hatred into every home — now stands against you. It has three phases and summons static-minions when wounded. Two gifts are yours in this final hour: call on the ANCESTORS (twice) to strike it down, and a PRAYER (once) to restore your spirit fully. Fight for every ancestor who came before you!'),500);
 }
 
 // ══════ START ══════
@@ -926,6 +973,7 @@ function stepGame(){
     movePlayer();
     if(bossActive)updateBoss();
     else{moveEnemies();autoSpawn();}
+    updateSpiritGuides();
     checkSwordHits();
     updateBullets();
     updateShield();
@@ -990,6 +1038,19 @@ function movePlayer(){
 }
 
 // ══════ BOSS AI ══════
+function updateSpiritGuides(){
+  if(prayerGlow>0)prayerGlow--;
+  spiritGuides=spiritGuides.filter(s=>s.life>0);
+  spiritGuides.forEach(s=>{
+    s.life--;
+    if(boss&&!boss.dead){
+      // home in on the boss
+      const dx=boss.px-s.x, dy=boss.py-s.y, l=Math.hypot(dx,dy)||1;
+      s.x+=dx/l*8; s.y+=dy/l*8;
+      if(l<30&&!s.hit){s.hit=true;spawnPfx(boss.px,boss.py,'#D4AF37','★',10);}
+    }
+  });
+}
 function updateBoss(){
   if(!boss||boss.dead)return;
   if(boss.ht>0){boss.ht--;return;}
@@ -1102,6 +1163,7 @@ function hitBoss(){
   if(boss.hp<=0){
     boss.dead=true;bossActive=false;
     document.getElementById('bossbar').style.display='none';
+    document.getElementById('bossAssist').classList.remove('on');
     spawnPfx(boss.px,boss.py,'#FFD700','★',20);
     score+=500;defeated+=10;updHUD();
     setTimeout(()=>doWin(),800);
@@ -1169,7 +1231,11 @@ function checkPortalStep(){
         notify('⚠ Speak with ALL Ancestors before the portal opens!');
         py-=24;return;
       }
-      if(port.req&&quizZone!==zone){triggerQuiz();return;}
+      if(port.req&&!quizPassed[zone]){
+        // Only trigger the quiz if it's not already open; push player off tile
+        if(!quizOpen){py-=28;triggerQuiz();}
+        return;
+      }
       goZone(port.toZone,port.toTC,port.toTR);
     }
   });
@@ -1183,6 +1249,7 @@ function goZone(toZ,toTC,toTR){
     camx=px-VW/2;camy=py-VH/2;
     enemies=[];spawnTimer=0;boss=null;bossActive=false;
     document.getElementById('bossbar').style.display='none';
+    document.getElementById('bossAssist').classList.remove('on');
     spawnInitEnemies();updHUD();showBanner(toZ);
     wf.style.transition='opacity 0.7s';wf.style.opacity='0';
     transitioning=false;
@@ -1208,9 +1275,9 @@ function goZone(toZ,toTC,toTR){
 // ══════ QUIZ SYSTEM ══════
 function triggerQuiz(){
   quizZone=zone;updObjectives();
-  quizQs=[...QUIZZES[zone]].sort(()=>Math.random()-0.5).slice(0,3);
+  quizQs=[...QUIZZES[zone]].sort(()=>Math.random()-0.5).slice(0,4);
   quizIdx=0;quizCorrect=0;quizAnswered=false;
-  document.getElementById('qsub').textContent=`Zone ${zone+1}: ${ZONES[zone].name} — Answer 2 of 3 correctly to restore health and open the portal!`;
+  document.getElementById('qsub').textContent=`Zone ${zone+1}: ${ZONES[zone].name} — Answer 3 of 4 correctly to restore health and open the portal!`;
   showQuizQuestion();
   document.getElementById('quiz').style.display='flex';
   quizOpen=true;
@@ -1251,8 +1318,8 @@ function quizNext(){
   quizIdx++;
   if(quizIdx<quizQs.length){showQuizQuestion();return;}
   // Show results
-  const passed=quizCorrect>=2;
-  document.getElementById('qq').textContent=`Quiz Complete! You got ${quizCorrect}/3 correct.`;
+  const passed=quizCorrect>=3;
+  document.getElementById('qq').textContent=`Quiz Complete! You got ${quizCorrect}/4 correct.`;
   document.getElementById('qopts').innerHTML='';
   document.getElementById('qresult').textContent=passed
     ?'🌟 Excellent! You earned 2 restored hearts. The portal is now open — walk south!'
@@ -1261,8 +1328,11 @@ function quizNext(){
   document.getElementById('qnext').style.display='block';
   document.getElementById('qnext').onclick=()=>{
     if(passed){php=Math.min(pmaxhp,php+2);buildHearts();notify('💖 +2 Hearts restored for passing the knowledge test!');}
+    quizPassed[zone]=true;          // portal now permanently open for this zone
+    quizZone=zone;
     document.getElementById('quiz').style.display='none';
     quizOpen=false;
+    updObjectives();
     notify('🌟 Portal open! Walk south to continue your journey.');
     document.getElementById('qnext').onclick=quizNext;
   };
@@ -1420,6 +1490,38 @@ function render(){
       c.fillText(ring.lbl,pcx,pcy-ring.r-8);
     });
     farRings=farRings.filter(r=>r.life>0);
+    c.globalAlpha=1;
+  }
+
+  // ═══ SPIRIT GUIDES (ancestor assist) ═══
+  spiritGuides.forEach(s=>{
+    const gx=s.x-cx, gy=s.y-cy;
+    const alpha=Math.min(1,s.life/20);
+    c.globalAlpha=alpha;
+    // glowing spirit orb
+    const sg=c.createRadialGradient(gx,gy,2,gx,gy,18);
+    sg.addColorStop(0,'rgba(255,230,150,0.9)');sg.addColorStop(1,'rgba(212,175,55,0)');
+    c.fillStyle=sg;c.beginPath();c.arc(gx,gy,18,0,Math.PI*2);c.fill();
+    c.fillStyle='#FFF3C0';c.beginPath();c.arc(gx,gy,5,0,Math.PI*2);c.fill();
+    // name label
+    c.fillStyle='#FFE082';c.font='bold 8px Georgia,serif';c.textAlign='center';
+    c.fillText(s.name,gx,gy-16);
+    c.globalAlpha=1;
+  });
+  // ═══ PRAYER AURA around player ═══
+  if(prayerGlow>0){
+    const pgx=px-cx, pgy=py-cy;
+    const pulse=0.5+0.5*Math.sin(tick*0.2);
+    c.globalAlpha=Math.min(0.7,prayerGlow/180+0.2)*pulse;
+    const pg=c.createRadialGradient(pgx,pgy-6,8,pgx,pgy-6,44);
+    pg.addColorStop(0,'rgba(255,255,220,0.5)');
+    pg.addColorStop(0.6,'rgba(206,147,216,0.3)');
+    pg.addColorStop(1,'rgba(206,147,216,0)');
+    c.fillStyle=pg;c.beginPath();c.arc(pgx,pgy-6,44,0,Math.PI*2);c.fill();
+    // rotating halo dots
+    for(let i=0;i<6;i++){const a=i/6*Math.PI*2+tick*0.05;
+      c.fillStyle='rgba(255,245,200,0.8)';
+      c.beginPath();c.arc(pgx+Math.cos(a)*40,pgy-6+Math.sin(a)*40,2.5,0,Math.PI*2);c.fill();}
     c.globalAlpha=1;
   }
 
@@ -1617,7 +1719,7 @@ function drawTile(c,t,sx,sy,col,row){
       break;}
     case PO:{
       const allMet=allMetInZone();
-      const quizDone=quizZone===zone;
+      const quizDone=!!quizPassed[zone];
       const open=allMet&&quizDone;
       const pulse=0.5+0.5*Math.sin(tick*0.1+col);
       c.fillStyle=open?`rgba(0,220,140,${0.35+0.2*pulse})`:allMet?`rgba(255,200,0,${0.3+0.15*pulse})`:`rgba(60,80,255,${0.25+0.15*pulse})`;
@@ -1898,51 +2000,101 @@ function drawBoss(c,sx,sy){
   if(!boss)return;
   const b=Math.sin(tick*0.05)*3;
   const phase=boss.phase;
-  // huge glow — color shifts per phase
+  // menacing glow behind the TV — color shifts per phase
   const gcols=['rgba(180,0,0,0.3)','rgba(255,80,0,0.35)','rgba(255,0,200,0.4)'];
   c.globalAlpha=0.5+0.2*Math.sin(tick*0.08);
-  const grd=c.createRadialGradient(sx,sy,10,sx,sy,70);
+  const grd=c.createRadialGradient(sx,sy,10,sx,sy,80);
   grd.addColorStop(0,gcols[phase]);grd.addColorStop(1,'transparent');
-  c.fillStyle=grd;c.beginPath();c.arc(sx,sy,70,0,Math.PI*2);c.fill();c.globalAlpha=1;
+  c.fillStyle=grd;c.beginPath();c.arc(sx,sy,80,0,Math.PI*2);c.fill();c.globalAlpha=1;
   // shadow
-  c.fillStyle='rgba(0,0,0,0.4)';c.beginPath();c.ellipse(sx,sy+36,30,10,0,0,Math.PI*2);c.fill();
-  // legs — big
-  const ls=Math.sin(tick*0.15)*12;
-  c.fillStyle='#1a1a1a';c.fillRect(sx-16,sy+14+b,14,28+ls);c.fillRect(sx+2,sy+14+b,14,28-ls);
-  c.fillStyle='#0d0d0d';c.fillRect(sx-18,sy+40+b,16,10);c.fillRect(sx+2,sy+40+b,16,10);
-  // coat — dark with phase color
-  const coatCols=['#1a0000','#200800','#14001a'];
-  c.fillStyle=coatCols[phase];c.fillRect(sx-22,sy-22+b,44,38);
-  // red lapels
-  c.fillStyle='#8B0000';c.fillRect(sx-18,sy-22+b,10,20);c.fillRect(sx+8,sy-22+b,10,20);
-  // gold chain
-  c.fillStyle='#D4AF37';for(let i=0;i<5;i++){c.beginPath();c.arc(sx-6+i*3,sy-6+b+i,1.5,0,Math.PI*2);c.fill();}
-  // neck
-  c.fillStyle='#5C3317';c.fillRect(sx-6,sy-28+b,12,10);
-  // head — bigger
-  c.fillStyle='#5C3317';c.beginPath();c.arc(sx,sy-42+b,22,0,Math.PI*2);c.fill();
-  // hat — massive
-  c.fillStyle='#0d0d0d';c.fillRect(sx-24,sy-56+b,48,10);c.fillRect(sx-16,sy-78+b,32,24);
-  c.fillStyle='#8B0000';c.fillRect(sx-24,sy-56+b,48,3);
-  // eyes — glowing
-  const eyeCol=['#FF1744','#FF6D00','#FF00FF'];
-  c.fillStyle=eyeCol[phase];c.fillRect(sx-12,sy-47+b,8,6);c.fillRect(sx+4,sy-47+b,8,6);
-  c.fillStyle='#FF0000';c.globalAlpha=0.5+0.5*Math.sin(tick*0.15);
-  c.beginPath();c.arc(sx-8,sy-44+b,5,0,Math.PI*2);c.fill();
-  c.beginPath();c.arc(sx+8,sy-44+b,5,0,Math.PI*2);c.fill();c.globalAlpha=1;
-  // scar
-  c.strokeStyle='#8B0000';c.lineWidth=2;
-  c.beginPath();c.moveTo(sx-4,sy-50+b);c.lineTo(sx+2,sy-36+b);c.stroke();
-  // weapons — chains
-  c.strokeStyle='#888';c.lineWidth=3;
-  c.beginPath();c.moveTo(sx-22,sy-8+b);c.quadraticCurveTo(sx-36,sy+8+b,sx-28,sy+28+b);c.stroke();
-  c.beginPath();c.moveTo(sx+22,sy-8+b);c.quadraticCurveTo(sx+36,sy+8+b,sx+28,sy+28+b);c.stroke();
+  c.fillStyle='rgba(0,0,0,0.4)';c.beginPath();c.ellipse(sx,sy+44,40,10,0,0,Math.PI*2);c.fill();
+
+  // ═══ THE BROADCAST — a monstrous vintage television ═══
+  const ty=sy+b;
+  // antenna (rabbit ears) sprouting from the top
+  c.strokeStyle='#9e9e9e';c.lineWidth=3;
+  c.beginPath();c.moveTo(sx-6,ty-30);c.lineTo(sx-26,ty-58);c.stroke();
+  c.beginPath();c.moveTo(sx+6,ty-30);c.lineTo(sx+26,ty-58);c.stroke();
+  // antenna tips glow with phase color
+  const tipCol=['#FF1744','#FF6D00','#FF00FF'][phase];
+  c.fillStyle=tipCol;c.beginPath();c.arc(sx-26,ty-58,4,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sx+26,ty-58,4,0,Math.PI*2);c.fill();
+  // occasional spark between antennae in later phases
+  if(phase>=1&&Math.sin(tick*0.3)>0.7){
+    c.strokeStyle=tipCol;c.lineWidth=1.5;c.globalAlpha=0.8;
+    c.beginPath();c.moveTo(sx-26,ty-58);c.lineTo(sx+26,ty-58);c.stroke();c.globalAlpha=1;
+  }
+
+  // wooden TV cabinet body
+  const wood=['#3a2416','#42230f','#2e1a2e'][phase];
+  c.fillStyle=wood;c.fillRect(sx-42,ty-30,84,64);
+  c.fillStyle='rgba(255,255,255,0.06)';c.fillRect(sx-42,ty-30,84,4);
+  c.fillStyle='rgba(0,0,0,0.3)';c.fillRect(sx-42,ty+30,84,4);
+  // squat legs
+  c.fillStyle='#1a1008';c.fillRect(sx-36,ty+34,7,10);c.fillRect(sx+29,ty+34,7,10);
+
+  // screen bezel
+  c.fillStyle='#111';c.fillRect(sx-36,ty-24,58,52);
+  // ═══ THE SCREEN — hostile broadcast ═══
+  // rounded CRT screen
+  c.save();
+  c.beginPath();c.roundRect(sx-33,ty-21,52,46,8);c.clip();
+  // screen base glow
+  const scrCol=['#1a0505','#1a0f05','#1a051a'][phase];
+  c.fillStyle=scrCol;c.fillRect(sx-33,ty-21,52,46);
+  // rolling scanlines
+  for(let ln=0;ln<46;ln+=3){
+    c.fillStyle=`rgba(0,0,0,${0.15+0.1*Math.sin(tick*0.2+ln)})`;
+    c.fillRect(sx-33,ty-21+ln,52,1);
+  }
+  // static noise flecks (more intense in later phases)
+  const noiseN=[10,18,28][phase];
+  for(let i=0;i<noiseN;i++){
+    const nx=sx-32+Math.random()*50, ny=ty-20+Math.random()*44;
+    c.fillStyle=`rgba(255,255,255,${Math.random()*0.4})`;
+    c.fillRect(nx,ny,2,2);
+  }
+  // the face in the broadcast — glaring eyes + hostile mouth
+  const eyeCol=['#FF1744','#FF6D00','#FF00FF'][phase];
+  c.fillStyle=eyeCol;c.globalAlpha=0.6+0.4*Math.sin(tick*0.15);
+  c.beginPath();c.arc(sx-14,ty-4,6,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sx+2,ty-4,6,0,Math.PI*2);c.fill();
+  c.globalAlpha=1;
+  c.fillStyle='#fff';c.beginPath();c.arc(sx-14,ty-4,2,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sx+2,ty-4,2,0,Math.PI*2);c.fill();
+  // snarling mouth — jagged
+  c.strokeStyle=eyeCol;c.lineWidth=2;
+  c.beginPath();
+  c.moveTo(sx-14,ty+12);
+  for(let k=0;k<5;k++)c.lineTo(sx-14+k*7,ty+12+(k%2?4:-2));
+  c.stroke();
+  c.restore();
+  // screen glass reflection
+  c.fillStyle='rgba(255,255,255,0.08)';
+  c.beginPath();c.moveTo(sx-30,ty-19);c.lineTo(sx-14,ty-19);c.lineTo(sx-24,ty+2);c.closePath();c.fill();
+
+  // control panel on the right side of the cabinet
+  c.fillStyle='#2a1a10';c.fillRect(sx+24,ty-22,16,48);
+  // dials
+  c.fillStyle='#c9a24a';
+  c.beginPath();c.arc(sx+32,ty-12,4,0,Math.PI*2);c.fill();
+  c.beginPath();c.arc(sx+32,ty+2,4,0,Math.PI*2);c.fill();
+  c.strokeStyle='#1a1008';c.lineWidth=1.5;
+  c.beginPath();c.moveTo(sx+32,ty-12);c.lineTo(sx+32+Math.cos(tick*0.1)*3,ty-12+Math.sin(tick*0.1)*3);c.stroke();
+  // speaker grille
+  c.fillStyle='#1a1008';for(let g=0;g<5;g++)c.fillRect(sx+26,ty+12+g*2.5,12,1.2);
+
   // phase label
-  const phaseTxt=['PHASE 1','PHASE 2 ⚠','PHASE 3 ☠'];
-  c.fillStyle='#FF1744';c.font='bold 8px Georgia,serif';c.textAlign='center';c.fillText(phaseTxt[phase],sx,sy-86+b);
+  const phaseTxt=['ON AIR','BREAKING ⚠','SIGNAL LOST ☠'][phase];
+  c.fillStyle=eyeCol;c.font='bold 8px Georgia,serif';c.textAlign='center';
+  c.fillText(phaseTxt,sx,ty-66);
+  // "ON AIR" style tally light
+  if(Math.sin(tick*0.2)>0){c.fillStyle='#FF1744';c.beginPath();c.arc(sx-38,ty-26,3,0,Math.PI*2);c.fill();}
+
   // hurt flash
-  if(boss.ht>0){c.globalAlpha=0.4;c.fillStyle='#fff';c.beginPath();c.arc(sx,sy,36,0,Math.PI*2);c.fill();c.globalAlpha=1;}
+  if(boss.ht>0){c.globalAlpha=0.5;c.fillStyle='#fff';c.fillRect(sx-42,ty-30,84,64);c.globalAlpha=1;}
 }
+
 
 // ══════ ANCESTOR SPRITES ══════
 function charBase(c,sx,sy,cl,sk){
@@ -2050,6 +2202,49 @@ function updFARMeter(){
   const btn=document.getElementById('farBtn');
   if(fill)fill.style.width=(farCharge/farMax*100)+'%';
   if(btn)btn.classList.toggle('ready',farCharge>=farMax);
+}
+function callAncestors(){
+  if(!bossActive){notify('The ancestors answer only in the final battle.');return;}
+  if(ancestorHelp<=0){notify('The ancestors have already given all they can.');return;}
+  ancestorHelp--;
+  updBossAssists();
+  sfx('far');addShake(10);
+  notify('🧑🏿 THE ANCESTORS RISE — Harriet, Frederick, and Sojourner strike the Broadcast!');
+  // Summon 3 spirit guides that fly at the boss
+  const names=['Harriet','Douglass','Truth'];
+  for(let i=0;i<3;i++){
+    const a=(i/3)*Math.PI*2+tick*0.1;
+    spiritGuides.push({
+      x:px+Math.cos(a)*60, y:py+Math.sin(a)*60,
+      life:60, name:names[i], hit:false
+    });
+  }
+  // Heavy damage to boss + clear all minions
+  if(boss&&!boss.dead){for(let i=0;i<8;i++)hitBoss();}
+  enemies.forEach(e=>{if(e.minion&&!e.dead){e.dead=true;e.dt=0;spawnPfx(e.px,e.py,'#D4AF37','★',8);}});
+  for(let i=0;i<16;i++){const a=i/16*Math.PI*2;spawnPfx(px+Math.cos(a)*40,py+Math.sin(a)*40,'✨',1,24);}
+}
+function callPrayer(){
+  if(!bossActive){notify('Prayer steadies you only in the final battle.');return;}
+  if(prayerHelp<=0){notify('You have already prayed. Your faith carries you now.');return;}
+  prayerHelp--;
+  updBossAssists();
+  sfx('far');
+  prayerGlow=180;                 // ~3 seconds of divine protection
+  pinv=Math.max(pinv,180);        // temporary invincibility
+  php=pmaxhp;buildHearts();       // full heal
+  shield=shieldMax;buildShieldPips();
+  notify('🙏 A PRAYER RISES — you are shielded by faith. Full spirit restored.');
+  flashWhite();
+  for(let i=0;i<20;i++){const a=i/20*Math.PI*2;spawnPfx(px+Math.cos(a)*30,py+Math.sin(a)*30,'🕊️',1,30);}
+}
+function updBossAssists(){
+  const ab=document.getElementById('ancBtn'), pb=document.getElementById('prayBtn');
+  const ac=document.getElementById('ancCount'), pc=document.getElementById('prayCount');
+  if(ac)ac.textContent=ancestorHelp;
+  if(pc)pc.textContent=prayerHelp;
+  if(ab)ab.classList.toggle('spent',ancestorHelp<=0);
+  if(pb)pb.classList.toggle('spent',prayerHelp<=0);
 }
 function fireFAR(){
   if(dlgOpen||quizOpen)return;
@@ -2184,7 +2379,7 @@ function mapDlg(){
   if(quizOpen)return;
   const npcsHere=NPCS.filter(n=>n.zone===zone);
   const met=npcsHere.filter(n=>npcState[n.id].met).length;
-  const quizDone=quizZone===zone;
+  const quizDone=!!quizPassed[zone];
   const portal=allMetInZone()?(quizDone?'OPEN ✅':'QUIZ READY 📚 — walk to portal'):'LOCKED 🔒 — speak with all Ancestors';
   openDlg('🗺 Journey Status',`Zone ${zone+1}/5: ${ZONES[zone].name}\nAncestors: ${met}/${npcsHere.length} met\nPortal: ${portal}\nArtifacts: ${ITEMS.filter((_,i)=>itemState[i]).length}/10\nScore: ${score}  Defeated: ${defeated}`);
 }
@@ -2236,7 +2431,7 @@ function updObjectives(){
   const zItems=ITEMS.map((it,i)=>({it,i})).filter(o=>o.it.zone===zone);
   const reqItems=zItems.filter(o=>!o.it.optional);
   const gotReq=reqItems.filter(o=>itemState[o.i]).length;
-  const quizDone=quizZone===zone;
+  const quizDone=!!quizPassed[zone];
   const allMet=met===zNpcs.length&&zNpcs.length>0;
 
   const ancRow=document.getElementById('obj-anc');
