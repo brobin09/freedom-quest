@@ -402,8 +402,8 @@ const M3=[
   [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
   [TR,FL,GR,GR,GR,GR,GR,FL,GR,GR,GR,GR,GR,GR,GR,GR,FL,GR,GR,GR,GR,GR,FL,TR],
   [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
-  [TR,GR,GR,GR,SC,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,SW,GR,GR,GR,GR,TR],
-  [TR,WL,WL,WL,GR,WL,WL,WL,WL,WL,WL,WL,WL,WL,WL,WL,WL,GR,WL,WL,WL,WL,WL,TR],
+  [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
+  [TR,WL,WL,SC,GR,GR,SC,WL,WL,WL,WL,WL,WL,WL,WL,SW,GR,GR,SW,WL,WL,WL,WL,TR],
   [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
   [TR,FL,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,FL,TR],
   [TR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,GR,TR],
@@ -924,21 +924,21 @@ function checkSegregationGate(){
   if(zone!==3||segAmbushed)return;
   const ptc=Math.floor(px/TS),ptr=Math.floor(py/TS);
   // WHITES ONLY gap is at col 17, row 9. COLORED gap at col 4, row 9.
-  if(ptr===9&&ptc===17){
+  if(ptr===9&&(ptc===16||ptc===17)){
     // Player chose the "whites only" path — overwhelmed by enforcers
     segAmbushed=true;
     notify('⚠ "WHITES ONLY" — you are surrounded! The system defends its line.');
     flashRed();
     // Spawn a swarm around the player
-    const swarmPts=[[15,8],[19,8],[15,11],[19,11],[13,9],[21,9],[17,6],[17,12]];
+    const swarmPts=[[14,8],[20,8],[14,11],[20,11],[13,9],[21,9],[16,6],[17,12]];
     swarmPts.forEach(([sc,sr])=>{
       const en=mkEnemy(sc*TS+24,sr*TS+24,ZONES[zone]);
-      en.hp=Math.max(2,en.maxHp-1);en.maxHp=en.hp;  // slightly weaker so it's survivable
+      en.hp=Math.max(2,en.maxHp-1);en.maxHp=en.hp;
       enemies.push(en);
     });
     spawnPfx(px,py-10,'⚠',4,18);
   }
-  if(ptr===9&&ptc===4&&!npcState.__segLesson){
+  if(ptr===9&&(ptc===4||ptc===5)&&!npcState.__segLesson){
     npcState.__segLesson=true;
     notify('✊ You took the road they forced on your people — and walked it with dignity.');
   }
@@ -1871,26 +1871,33 @@ function sword(){
   }
 }
 function firePistol(){
-  swCool=20;              // fire rate
+  swCool=18;              // fire rate
   muzzle=6;               // muzzle flash frames
   const dirs=[[0,-1],[1,0],[0,1],[-1,0]];
   const [dx,dy]=dirs[pfacing];
-  bullets.push({x:px+dx*20,y:py-8+dy*20,vx:dx*9,vy:dy*9,life:60,dir:pfacing});
-  spawnPfx(px+dx*22,py-8+dy*22,'✨',1,10);
+  // Spawn bullet from player center (small offset so it clears the sprite,
+  // but not so far it can start inside a wall)
+  const sx=px+dx*12, sy=py+dy*12;
+  bullets.push({x:sx,y:sy,vx:dx*10,vy:dy*10,life:70,dir:pfacing});
+  spawnPfx(sx,sy,'✨',1,8);
 }
 function updateBullets(){
   bullets=bullets.filter(b=>b.life>0);
   bullets.forEach(b=>{
     b.x+=b.vx;b.y+=b.vy;b.life--;
-    // wall collision
-    if(SOLID.has(tileAt(Math.floor(b.x/TS),Math.floor(b.y/TS)))){b.life=0;spawnPfx(b.x,b.y,'💥',1,10);return;}
-    // boss hit
-    if(boss&&!boss.dead&&Math.hypot(b.x-boss.px,b.y-boss.py)<40){hitBoss();b.life=0;spawnPfx(b.x,b.y,'💥',2,12);}
-    // enemy hit
-    enemies.forEach(e=>{
-      if(e.dead||e.ht>0)return;
-      if(Math.hypot(b.x-e.px,b.y-e.py)<26){hitEnemy(e);b.life=0;spawnPfx(b.x,b.y,'💥',2,12);}
-    });
+    b.age=(b.age||0)+1;
+    // enemy hit — check FIRST so bullets always register on targets
+    let hit=false;
+    if(boss&&!boss.dead&&Math.hypot(b.x-boss.px,b.y-boss.py)<40){hitBoss();hit=true;}
+    if(!hit)for(const e of enemies){
+      if(e.dead||e.ht>0)continue;
+      if(Math.hypot(b.x-e.px,b.y-e.py)<28){hitEnemy(e);hit=true;break;}
+    }
+    if(hit){b.life=0;spawnPfx(b.x,b.y,'💥',2,12);return;}
+    // wall collision — skip first 2 frames so muzzle-adjacent walls don't eat the shot
+    if(b.age>2&&SOLID.has(tileAt(Math.floor(b.x/TS),Math.floor(b.y/TS)))){
+      b.life=0;spawnPfx(b.x,b.y,'💥',1,10);return;
+    }
   });
 }
 function doTalk(){
