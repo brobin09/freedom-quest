@@ -832,6 +832,7 @@ function startGame(){
     buildHearts();
     updHUD();
     showBanner(0);
+    _lastTime=0;_accumulator=0;
     requestAnimationFrame(gameLoop);
     setTimeout(()=>notify('🌟 D-pad: move  ⚔️: attack  🤝: talk  📖: take  🗺: map'), 800);
     setTimeout(()=>openDlg('THE ANCESTORS CALL',
@@ -844,12 +845,16 @@ function restartGame(){
 }
 
 // ══════ MAIN LOOP ══════
-function gameLoop(){
-  requestAnimationFrame(gameLoop);
-  if(!CTX)return;
-  if(gameOver||won||transitioning){render();return;}
-  // Hit-pause: freeze the simulation briefly on impact for weight
-  if(hitPause>0){ hitPause--; render(); return; }
+// Fixed-timestep loop — locks game speed to 60 updates/sec regardless of
+// the display refresh rate. Without this, 90Hz/120Hz phones run the game
+// 1.5x-2x too fast ("overclocked").
+const FIXED_DT=1000/60;      // one logic step = 16.667ms of game time
+let _lastTime=0, _accumulator=0;
+const MAX_STEPS=5;           // cap catch-up so a lag spike can't freeze the game
+
+function stepGame(){
+  if(gameOver||won||transitioning)return;
+  if(hitPause>0){ hitPause--; return; }
   tick++;
   if(!dlgOpen&&!quizOpen){
     movePlayer();
@@ -864,8 +869,30 @@ function gameLoop(){
     autoPickup();
   }
   smoothCam();
+}
+
+function gameLoop(ts){
+  requestAnimationFrame(gameLoop);
+  if(!CTX)return;
+  if(!_lastTime)_lastTime=ts||performance.now();
+  const now=ts||performance.now();
+  let frameTime=now-_lastTime;
+  _lastTime=now;
+  // Guard against huge gaps (tab was backgrounded) — clamp to avoid a burst
+  if(frameTime>250)frameTime=FIXED_DT;
+  _accumulator+=frameTime;
+  // Run as many fixed steps as real time has accumulated, capped
+  let steps=0;
+  while(_accumulator>=FIXED_DT&&steps<MAX_STEPS){
+    stepGame();
+    _accumulator-=FIXED_DT;
+    steps++;
+  }
+  // If we hit the cap, drop the backlog so we don't spiral
+  if(steps>=MAX_STEPS)_accumulator=0;
   render();
-  document.getElementById('wavemsg').style.display=(allMetInZone()||bossActive)?'none':'block';
+  const wm=document.getElementById('wavemsg');
+  if(wm)wm.style.display=(allMetInZone()||bossActive)?'none':'block';
 }
 
 // ══════ PLAYER ══════
