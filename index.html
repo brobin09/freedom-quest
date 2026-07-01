@@ -847,6 +847,7 @@ let farRings=[];               // expanding shockwave rings
 // Boss assists — ancestors help twice, prayer once
 let ancestorHelp=2, prayerHelp=1;
 let spiritGuides=[];           // visiting ancestor spirits animation
+let ancestorHitCool=0;         // cooldown after striking an ancestor
 let prayerGlow=0;              // prayer aura timer
 // Game feel
 let shakeAmt=0;      // screen shake magnitude
@@ -899,7 +900,7 @@ function resetState(){
   swActive=false;swTimer=0;swCool=0;bullets=[];muzzle=0;
   shield=0;shieldMax=0;shieldRegen=0;shieldFlash=0;segAmbushed=false;
   farCharge=0;farBlast=0;farRings=[];shakeAmt=0;hitPause=0;
-  ancestorHelp=2;prayerHelp=1;spiritGuides=[];prayerGlow=0;
+  ancestorHelp=2;prayerHelp=1;spiritGuides=[];prayerGlow=0;ancestorHitCool=0;
   enemies=[];eidx=0;boss=null;bossActive=false;
   npcState={};NPCS.forEach(n=>npcState[n.id]={met:false,didx:0});
   itemState={};ITEMS.forEach((_,i)=>itemState[i]=false);
@@ -1014,6 +1015,7 @@ const SPD=2.7;
 function movePlayer(){
   if(pinv>0)pinv--;
   if(swCool>0)swCool--;
+  if(ancestorHitCool>0)ancestorHitCool--;
   if(pkx||pky){
     const nx=px+pkx,ny=py+pky;
     if(!solid(nx,py))px=nx;else pkx=0;
@@ -1139,12 +1141,34 @@ function autoSpawn(){
 }
 
 // ══════ COMBAT ══════
+function strikeAncestorCheck(sx,sy,radius){
+  // Returns true if the strike landed on an ancestor (and punishes the player)
+  if(ancestorHitCool>0)return false;
+  for(const n of NPCS){
+    if(n.zone!==zone)continue;
+    const nx=n.tc*TS+24, ny=n.tr*TS+24;
+    if(Math.hypot(sx-nx,sy-ny)<radius){
+      // Striking an ancestor wounds YOUR spirit
+      ancestorHitCool=45;
+      php=Math.max(0,php-1);buildHearts();
+      pinv=Math.max(pinv,30);
+      flashRed();addShake(6);sfx('hurt');
+      spawnPfx(px,py-10,'💔',3,14);
+      notify('💔 You struck '+n.name.split(' ').slice(-1)[0]+'! Never raise your hand against your ancestors — your spirit weakens.');
+      if(php<=0){sfx('death');doGameOver();}
+      return true;
+    }
+  }
+  return false;
+}
 function checkSwordHits(){
   if(!swActive)return;
   const reach=44;
   const offs=[[0,-reach],[reach,0],[0,reach],[-reach,0]];
   const[hx,hy]=offs[pfacing];
   const sx=px+hx,sy=py+hy;
+  // Striking an ancestor hurts you — check first
+  if(strikeAncestorCheck(sx,sy,32))return;
   // Hit boss
   if(boss&&!boss.dead&&Math.hypot(sx-boss.px,sy-boss.py)<56)hitBoss();
   // Hit enemies
@@ -2317,8 +2341,18 @@ function updateBullets(){
   bullets.forEach(b=>{
     b.x+=b.vx;b.y+=b.vy;b.life--;
     b.age=(b.age||0)+1;
-    // enemy hit — check FIRST so bullets always register on targets
+    // ancestor hit — shooting an ancestor wounds you and consumes the shot
     let hit=false;
+    for(const n of NPCS){
+      if(n.zone!==zone)continue;
+      const nx=n.tc*TS+24, ny=n.tr*TS+24;
+      if(Math.hypot(b.x-nx,b.y-ny)<24){
+        strikeAncestorCheck(b.x,b.y,26);
+        b.life=0;hit=true;break;
+      }
+    }
+    if(hit){return;}
+    // enemy hit — check FIRST so bullets always register on targets
     if(boss&&!boss.dead&&Math.hypot(b.x-boss.px,b.y-boss.py)<40){hitBoss();hit=true;}
     if(!hit)for(const e of enemies){
       if(e.dead||e.ht>0)continue;
